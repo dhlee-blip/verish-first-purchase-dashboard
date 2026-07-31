@@ -146,6 +146,7 @@
   .kpi-delta.down { color: var(--critical); background: var(--critical-wash); }
   .kpi-delta .arrow { font-size: 11px; }
   .kpi-delta .vs { color: var(--ink-faint); font-weight: 400; margin-left: 2px; }
+  .kpi-delta.unavailable { color: var(--ink-faint); background: var(--surface-alt); font-weight: 500; }
 
   /* ---------- Cards ---------- */
   .chart-card, .table-card {
@@ -333,7 +334,13 @@
     </div>
   </header>
 
-  <section class="kpi-strip" id="kpiStrip"></section>
+  <section>
+    <div class="toolbar-row" style="margin-bottom: 10px;">
+      <span class="filter-label">대비 기준</span>
+      <div class="date-pill-group" id="kpiBasisGroup" role="tablist" aria-label="비교 기준"></div>
+    </div>
+    <div class="kpi-strip" id="kpiStrip"></div>
+  </section>
 
   <section class="chart-card">
     <div class="toolbar">
@@ -662,14 +669,34 @@
     return e;
   }
 
-  // ---------- KPI strip ----------
+  // ---------- KPI strip (전일/전주/전월 대비 토글) ----------
   var latest = dailyTotals[dailyTotals.length - 1];
-  var prev = dailyTotals[dailyTotals.length - 2];
+  var totalsByDate = {};
+  dailyTotals.forEach(function (d) { totalsByDate[d.date] = d; });
 
-  function deltaTile(label, value, curr, prevVal, formatter, isPct) {
+  function shiftDate(dateStr, num, unit) {
+    var d = new Date(dateStr + "T00:00:00Z");
+    if (unit === "month") d.setUTCMonth(d.getUTCMonth() - num);
+    else d.setUTCDate(d.getUTCDate() - num);
+    return d.toISOString().slice(0, 10);
+  }
+
+  var KPI_BASES = [
+    { key: "day", label: "전일", vs: "전일 대비", compareDate: function () { return shiftDate(latest.date, 1, "day"); } },
+    { key: "week", label: "전주", vs: "전주 대비", compareDate: function () { return shiftDate(latest.date, 7, "day"); } },
+    { key: "month", label: "전월", vs: "전월 대비", compareDate: function () { return shiftDate(latest.date, 1, "month"); } }
+  ];
+
+  function deltaTile(label, value, curr, compareRow, field, isPct, vsLabel) {
     var tile = el("div", "kpi-tile");
     tile.appendChild(el("div", "kpi-label", label));
     tile.appendChild(el("div", "kpi-value", value));
+    if (!compareRow) {
+      var na = el("div", "kpi-delta unavailable", "비교 데이터 없음");
+      tile.appendChild(na);
+      return tile;
+    }
+    var prevVal = compareRow[field];
     var diff = curr - prevVal;
     var pct = prevVal !== 0 ? (diff / prevVal) * 100 : 0;
     var up = diff >= 0;
@@ -678,16 +705,38 @@
     delta.appendChild(arrow);
     var amt = isPct ? (Math.abs(diff)).toFixed(2) + "p" : Math.abs(pct).toFixed(1) + "%";
     delta.appendChild(document.createTextNode(amt));
-    delta.appendChild(el("span", "vs", "전일 대비"));
+    delta.appendChild(el("span", "vs", vsLabel));
     tile.appendChild(delta);
     return tile;
   }
 
   var kpiStrip = document.getElementById("kpiStrip");
-  kpiStrip.appendChild(deltaTile("최신일(" + fmtDateShort(latest.date) + ") 합계 매출", fmtWon(latest.revenue), latest.revenue, prev.revenue, fmtWon, false));
-  kpiStrip.appendChild(deltaTile("주문건수", fmtInt(latest.orders) + "건", latest.orders, prev.orders, fmtInt, false));
-  kpiStrip.appendChild(deltaTile("객단가 (주문 전체 결제금액 평균)", fmtWon(latest.aov), latest.aov, prev.aov, fmtWon, false));
-  kpiStrip.appendChild(deltaTile("일 매출 대비 비중", fmtPct(latest.share), latest.share, prev.share, fmtPct, true));
+  function renderKpiStrip(basisKey) {
+    var basis = KPI_BASES.filter(function (b) { return b.key === basisKey; })[0] || KPI_BASES[0];
+    var compareRow = totalsByDate[basis.compareDate()] || null;
+    kpiStrip.innerHTML = "";
+    kpiStrip.appendChild(deltaTile("최신일(" + fmtDateShort(latest.date) + ") 합계 매출", fmtWon(latest.revenue), latest.revenue, compareRow, "revenue", false, basis.vs));
+    kpiStrip.appendChild(deltaTile("주문건수", fmtInt(latest.orders) + "건", latest.orders, compareRow, "orders", false, basis.vs));
+    kpiStrip.appendChild(deltaTile("객단가 (주문 전체 결제금액 평균)", fmtWon(latest.aov), latest.aov, compareRow, "aov", false, basis.vs));
+    kpiStrip.appendChild(deltaTile("일 매출 대비 비중", fmtPct(latest.share), latest.share, compareRow, "share", true, basis.vs));
+  }
+
+  var kpiBasisGroup = document.getElementById("kpiBasisGroup");
+  var kpiBasisPills = [];
+  KPI_BASES.forEach(function (basis) {
+    var pill = el("button", "date-pill", basis.label);
+    pill.type = "button";
+    pill.setAttribute("role", "tab");
+    pill.addEventListener("click", function () {
+      kpiBasisPills.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
+      renderKpiStrip(basis.key);
+    });
+    kpiBasisGroup.appendChild(pill);
+    kpiBasisPills.push(pill);
+  });
+  kpiBasisPills[0].classList.add("active");
+  kpiBasisPills[0].setAttribute("aria-selected", "true");
+  renderKpiStrip("day");
 
   // ================= Line/area trend chart =================
   function renderTrendChart(container, data, valueKey, opts) {
