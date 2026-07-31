@@ -124,35 +124,6 @@
     text-wrap: balance;
     color: var(--ink);
   }
-  .masthead-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .range-badge {
-    font-size: 13px;
-    color: var(--ink-muted);
-    background: var(--surface-alt);
-    border: 1px solid var(--border);
-    padding: 6px 12px;
-    border-radius: var(--radius-chip);
-    font-variant-numeric: tabular-nums;
-  }
-  .gap-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--critical);
-    background: var(--critical-wash);
-    border: 1px solid color-mix(in srgb, var(--critical) 35%, transparent);
-    padding: 6px 12px 6px 10px;
-    border-radius: var(--radius-chip);
-  }
-  .gap-chip::before { content: "!"; display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: var(--critical); color: var(--surface); font-size: 11px; font-weight: 800; }
-
   /* ---------- KPI strip ---------- */
   .kpi-strip {
     display: grid;
@@ -359,10 +330,6 @@
     <div class="masthead-title-group">
       <span class="eyebrow">Verish 자사몰 · 상품 라인 성과</span>
       <h1 class="masthead-title">첫 구매 전용 퍼포먼스</h1>
-    </div>
-    <div class="masthead-meta">
-      <span class="range-badge" id="rangeBadge">—</span>
-      <span class="gap-chip" id="gapChip" hidden></span>
     </div>
   </header>
 
@@ -683,8 +650,6 @@
   var productDates = Object.keys(dailyProducts); // ascending, matches dailyTotals order
   var selectedDateIdx = productDates.length - 1;
 
-  var KNOWN_GAP_DATES = ["2026-07-30"];
-
   var fmtInt = function (n) { return Math.round(n).toLocaleString("ko-KR"); };
   var fmtWon = function (n) { return "₩" + fmtInt(n); };
   var fmtPct = function (n) { return n.toFixed(2) + "%"; };
@@ -695,15 +660,6 @@
     if (cls) e.className = cls;
     if (text !== undefined) e.textContent = text;
     return e;
-  }
-
-  // ---------- Masthead ----------
-  var first = dailyTotals[0].date, last = dailyTotals[dailyTotals.length - 1].date;
-  document.getElementById("rangeBadge").textContent = first + " – " + last + " (" + dailyTotals.length + "일)";
-  var gapChip = document.getElementById("gapChip");
-  if (KNOWN_GAP_DATES.length) {
-    gapChip.hidden = false;
-    gapChip.textContent = KNOWN_GAP_DATES.join(", ") + " 데이터 없음";
   }
 
   // ---------- KPI strip ----------
