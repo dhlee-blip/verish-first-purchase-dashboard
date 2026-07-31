@@ -9,4 +9,4 @@ Verish 자사몰(Cafe24)의 "[첫 구매 전용]" 상품 라인 일별 매출·�
 
 ## 보기
 
-GitHub Pages: (배포 후 이 줄에 URL을 채워 넣습니다)
+GitHub Pages: https://dhlee-blip.github.io/verish-first-purchase-dashboard/
