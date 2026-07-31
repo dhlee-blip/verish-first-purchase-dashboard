@@ -253,6 +253,27 @@
     .filter-total { margin-left: 0; width: 100%; order: 3; }
   }
 
+  /* ---------- Trend toolbar (granularity + date range) ---------- */
+  .toolbar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+  .toolbar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .toolbar-caption { margin: 0; font-size: 12px; color: var(--ink-faint); line-height: 1.5; }
+  .range-sep { color: var(--ink-faint); font-size: 12.5px; }
+  .date-input {
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 8px;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] .date-input { color-scheme: dark; }
+  @media (prefers-color-scheme: dark) { .date-input { color-scheme: dark; } }
+  .toolbar-row .filter-total { margin-left: auto; }
+
   svg text { font-family: var(--font-body); fill: var(--ink-muted); }
   .axis-line { stroke: var(--grid); stroke-width: 1; }
   .gridline { stroke: var(--grid); stroke-width: 1; }
@@ -347,17 +368,34 @@
 
   <section class="kpi-strip" id="kpiStrip"></section>
 
+  <section class="chart-card">
+    <div class="toolbar">
+      <div class="toolbar-row">
+        <span class="filter-label">보기 단위</span>
+        <div class="date-pill-group" id="granPillGroup" role="tablist" aria-label="집계 단위"></div>
+      </div>
+      <p class="toolbar-caption">매출·주문건수는 선택 구간 합계 · 객단가·매출비중은 구간 합계 기준 재계산값 · 스프레드시트 시트1 일별 데이터 기준</p>
+      <div class="toolbar-row">
+        <span class="filter-label">관측 기간</span>
+        <input type="date" class="date-input" id="rangeStart" aria-label="시작일">
+        <span class="range-sep">~</span>
+        <input type="date" class="date-input" id="rangeEnd" aria-label="종료일">
+        <div class="date-pill-group" id="rangePresetGroup" role="tablist" aria-label="기간 프리셋"></div>
+        <span class="filter-total" id="rangeTotal"></span>
+      </div>
+    </div>
+  </section>
+
   <section class="chart-row">
     <div class="chart-card">
       <div class="card-head">
-        <span class="card-title">일별 합계 매출 추이</span>
-        <span class="card-sub" id="revenueSub"></span>
+        <span class="card-title">합계 매출 추이</span>
       </div>
       <div class="chart-wrap" id="revenueChartWrap"></div>
     </div>
     <div class="chart-card">
       <div class="card-head">
-        <span class="card-title">일별 주문건수 추이</span>
+        <span class="card-title">주문건수 추이</span>
       </div>
       <div class="chart-wrap" id="ordersChartWrap"></div>
     </div>
@@ -695,8 +733,6 @@
   kpiStrip.appendChild(deltaTile("객단가 (주문 전체 결제금액 평균)", fmtWon(latest.aov), latest.aov, prev.aov, fmtWon, false));
   kpiStrip.appendChild(deltaTile("일 매출 대비 비중", fmtPct(latest.share), latest.share, prev.share, fmtPct, true));
 
-  document.getElementById("revenueSub").textContent = "최근 " + dailyTotals.length + "일 · 최신일 " + fmtWon(latest.revenue);
-
   // ================= Line/area trend chart =================
   function renderTrendChart(container, data, valueKey, opts) {
     opts = opts || {};
@@ -746,7 +782,7 @@
       var txt = document.createElementNS(svgNS, "text");
       txt.setAttribute("x", xAt(i)); txt.setAttribute("y", H - 6);
       txt.setAttribute("text-anchor", "middle"); txt.setAttribute("font-size", "10.5");
-      txt.textContent = fmtDateShort(data[i].date);
+      txt.textContent = data[i].label || fmtDateShort(data[i].date);
       svg.appendChild(txt);
     });
 
@@ -809,7 +845,7 @@
         crosshair.setAttribute("x1", xAt(i)); crosshair.setAttribute("x2", xAt(i));
         crosshair.style.opacity = "1";
         var val = opts.tooltipFormatter ? opts.tooltipFormatter(d) : fmtInt(d[valueKey]);
-        showTooltip(tooltip, container, xAt(i), yAt(d[valueKey]), d.date, val);
+        showTooltip(tooltip, container, xAt(i), yAt(d[valueKey]), d.tooltipLabel || d.date, val);
       };
       hit.addEventListener("pointerenter", show);
       hit.addEventListener("pointermove", show);
@@ -962,21 +998,96 @@
     totalEl.appendChild(document.createTextNode(" · " + summary.orders + "건"));
   }
 
+  // ---------- daily totals table (scoped to the selected date range) ----------
+  var dailyTableTbody = document.querySelector("#dailyTable tbody");
+  function renderDailyTable(rows) {
+    dailyTableTbody.innerHTML = "";
+    rows.slice().reverse().forEach(function (d) {
+      var tr = el("tr", d.date === maxDate ? "latest" : "");
+      tr.appendChild(el("td", null, d.date));
+      tr.appendChild(el("td", null, fmtWon(d.revenue)));
+      tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
+      tr.appendChild(el("td", null, fmtWon(d.aov)));
+      tr.appendChild(el("td", null, fmtPct(d.share)));
+      dailyTableTbody.appendChild(tr);
+    });
+  }
+
+  // ---------- trend range + granularity state ----------
+  var allDates = dailyTotals.map(function (d) { return d.date; });
+  var minDate = allDates[0], maxDate = allDates[allDates.length - 1];
+  var rangeStartDate = minDate, rangeEndDate = maxDate;
+  var granularity = "day"; // "day" | "week" | "month"
+
+  function isoWeekStart(dateStr) {
+    var d = new Date(dateStr + "T00:00:00Z");
+    var dow = d.getUTCDay(); // 0=Sun..6=Sat
+    var diffToMonday = dow === 0 ? -6 : 1 - dow;
+    var monday = new Date(d.getTime() + diffToMonday * 86400000);
+    return monday.toISOString().slice(0, 10);
+  }
+
+  function getFilteredTotals() {
+    return dailyTotals.filter(function (d) { return d.date >= rangeStartDate && d.date <= rangeEndDate; });
+  }
+
+  function aggregateRows(rows, gran) {
+    if (gran === "day") {
+      return rows.map(function (r) {
+        return { date: r.date, label: fmtDateShort(r.date), tooltipLabel: r.date, revenue: r.revenue, orders: r.orders, aov: r.aov, share: r.share };
+      });
+    }
+    var buckets = {};
+    rows.forEach(function (r) {
+      var key = gran === "month" ? r.date.slice(0, 7) : isoWeekStart(r.date);
+      if (!buckets[key]) buckets[key] = { revenue: 0, orders: 0, aovWeighted: 0, storeTotalSum: 0, first: r.date, last: r.date };
+      var b = buckets[key];
+      b.revenue += r.revenue;
+      b.orders += r.orders;
+      b.aovWeighted += r.aov * r.orders;
+      if (r.share > 0) b.storeTotalSum += (r.revenue * 100) / r.share;
+      if (r.date < b.first) b.first = r.date;
+      if (r.date > b.last) b.last = r.date;
+    });
+    var keys = Object.keys(buckets).sort();
+    return keys.map(function (key) {
+      var b = buckets[key];
+      var aov = b.orders > 0 ? Math.round(b.aovWeighted / b.orders) : 0;
+      var share = b.storeTotalSum > 0 ? Math.round((b.revenue / b.storeTotalSum) * 10000) / 100 : 0;
+      var label = gran === "month" ? key.slice(5, 7) + "월" : fmtDateShort(b.first) + "~" + fmtDateShort(b.last);
+      var tooltipLabel = gran === "month" ? key + " (" + fmtDateShort(b.first) + "~" + fmtDateShort(b.last) + ")" : b.first + " ~ " + b.last;
+      return { date: key, label: label, tooltipLabel: tooltipLabel, revenue: b.revenue, orders: b.orders, aov: aov, share: share };
+    });
+  }
+
   // ---------- render charts ----------
   function draw() {
-    renderTrendChart(document.getElementById("revenueChartWrap"), dailyTotals, "revenue", {
-      ariaLabel: "일별 합계 매출 추이",
+    var filtered = getFilteredTotals();
+    var series = aggregateRows(filtered.length ? filtered : dailyTotals, granularity);
+
+    renderTrendChart(document.getElementById("revenueChartWrap"), series, "revenue", {
+      ariaLabel: "합계 매출 추이",
       compact: true,
       tooltipFormatter: function (d) { return fmtWon(d.revenue); }
     });
-    renderTrendChart(document.getElementById("ordersChartWrap"), dailyTotals, "orders", {
-      ariaLabel: "일별 주문건수 추이",
+    renderTrendChart(document.getElementById("ordersChartWrap"), series, "orders", {
+      ariaLabel: "주문건수 추이",
       height: 190,
       tooltipFormatter: function (d) { return fmtInt(d.orders) + "건"; }
     });
     var dateKey = productDates[selectedDateIdx];
     var soldItems = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; });
     renderRankChart(document.getElementById("rankChartWrap"), soldItems.length ? soldItems : [{ name: "판매 상품 없음", revenue: 0, orders: 0 }]);
+
+    var rangeTotalEl = document.getElementById("rangeTotal");
+    var sumRevenue = filtered.reduce(function (s, d) { return s + d.revenue; }, 0);
+    var sumOrders = filtered.reduce(function (s, d) { return s + d.orders; }, 0);
+    rangeTotalEl.innerHTML = "";
+    rangeTotalEl.appendChild(document.createTextNode(filtered.length + "일 · 합계 "));
+    rangeTotalEl.appendChild(el("strong", null, fmtWon(sumRevenue)));
+    rangeTotalEl.appendChild(document.createTextNode(" · " + fmtInt(sumOrders) + "건"));
+
+    renderDailyTable(filtered);
   }
   draw();
   var resizeTimer;
@@ -984,6 +1095,74 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(draw, 120);
   });
+
+  // ---------- granularity pill group ----------
+  var granPillGroup = document.getElementById("granPillGroup");
+  var GRAN_OPTIONS = [{ key: "day", label: "일" }, { key: "week", label: "주" }, { key: "month", label: "월" }];
+  var granPillEls = [];
+  GRAN_OPTIONS.forEach(function (opt) {
+    var pill = el("button", "date-pill", opt.label);
+    pill.type = "button";
+    pill.setAttribute("role", "tab");
+    pill.addEventListener("click", function () {
+      granularity = opt.key;
+      granPillEls.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
+      draw();
+    });
+    granPillGroup.appendChild(pill);
+    granPillEls.push(pill);
+  });
+  granPillEls[0].classList.add("active");
+  granPillEls[0].setAttribute("aria-selected", "true");
+
+  // ---------- date-range inputs + presets ----------
+  var rangeStartInput = document.getElementById("rangeStart");
+  var rangeEndInput = document.getElementById("rangeEnd");
+  rangeStartInput.min = rangeEndInput.min = minDate;
+  rangeStartInput.max = rangeEndInput.max = maxDate;
+  rangeStartInput.value = rangeStartDate;
+  rangeEndInput.value = rangeEndDate;
+
+  function clampRangeAndDraw() {
+    var s = rangeStartInput.value || minDate;
+    var e = rangeEndInput.value || maxDate;
+    if (s > e) { var t = s; s = e; e = t; }
+    if (s < minDate) s = minDate;
+    if (e > maxDate) e = maxDate;
+    rangeStartDate = s; rangeEndDate = e;
+    rangeStartInput.value = s; rangeEndInput.value = e;
+    rangePresetEls.forEach(function (p) { p.classList.remove("active"); p.setAttribute("aria-selected", "false"); });
+    draw();
+  }
+  rangeStartInput.addEventListener("change", clampRangeAndDraw);
+  rangeEndInput.addEventListener("change", clampRangeAndDraw);
+
+  var rangePresetGroup = document.getElementById("rangePresetGroup");
+  var RANGE_PRESETS = [
+    { label: "전체", apply: function () { return [minDate, maxDate]; } },
+    { label: "최근 7일", apply: function () {
+        var end = new Date(maxDate + "T00:00:00Z");
+        var start = new Date(end.getTime() - 6 * 86400000).toISOString().slice(0, 10);
+        return [start < minDate ? minDate : start, maxDate];
+      } }
+  ];
+  var rangePresetEls = [];
+  RANGE_PRESETS.forEach(function (preset, i) {
+    var pill = el("button", "date-pill", preset.label);
+    pill.type = "button";
+    pill.setAttribute("role", "tab");
+    pill.addEventListener("click", function () {
+      var range = preset.apply();
+      rangeStartDate = range[0]; rangeEndDate = range[1];
+      rangeStartInput.value = rangeStartDate; rangeEndInput.value = rangeEndDate;
+      rangePresetEls.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
+      draw();
+    });
+    rangePresetGroup.appendChild(pill);
+    rangePresetEls.push(pill);
+  });
+  rangePresetEls[0].classList.add("active"); // "전체" active by default
+  rangePresetEls[0].setAttribute("aria-selected", "true");
 
   // ---------- date filter wiring (segmented pill group) ----------
   var datePillGroup = document.getElementById("datePillGroup");
@@ -1026,17 +1205,5 @@
   dateNext.addEventListener("click", function () { applyDate(selectedDateIdx + 1); });
 
   applyDate(selectedDateIdx);
-
-  // ---------- daily totals table ----------
-  var tbody = document.querySelector("#dailyTable tbody");
-  dailyTotals.slice().reverse().forEach(function (d, idx) {
-    var tr = el("tr", idx === 0 ? "latest" : "");
-    tr.appendChild(el("td", null, d.date));
-    tr.appendChild(el("td", null, fmtWon(d.revenue)));
-    tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
-    tr.appendChild(el("td", null, fmtWon(d.aov)));
-    tr.appendChild(el("td", null, fmtPct(d.share)));
-    tbody.appendChild(tr);
-  });
 })();
 </script>
