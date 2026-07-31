@@ -1,0 +1,1042 @@
+<title>첫 구매 전용 퍼포먼스 대시보드</title>
+<style>
+  :root {
+    --bg: #faf7f5;
+    --surface: #ffffff;
+    --surface-alt: #f2ebe8;
+    --border: #e6dcd8;
+    --grid: #e4dcd8;
+    --ink: #241c22;
+    --ink-muted: #8a7e86;
+    --ink-faint: #b3a7ad;
+    --accent: #a24463;
+    --accent-deep: #7a3049;
+    --accent-wash: rgba(162, 68, 99, 0.10);
+    --accent-wash-strong: rgba(162, 68, 99, 0.18);
+    --good: #3f8557;
+    --good-wash: rgba(63, 133, 87, 0.12);
+    --critical: #b5423b;
+    --critical-wash: rgba(181, 66, 59, 0.12);
+    --radius-card: 14px;
+    --radius-chip: 999px;
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17131a;
+      --surface: #201a21;
+      --surface-alt: #2a222b;
+      --border: #382e37;
+      --grid: #382e37;
+      --ink: #f0e9ec;
+      --ink-muted: #a79aa2;
+      --ink-faint: #6f636b;
+      --accent: #e38aa6;
+      --accent-deep: #f3b0c4;
+      --accent-wash: rgba(227, 138, 166, 0.12);
+      --accent-wash-strong: rgba(227, 138, 166, 0.20);
+      --good: #6fbe86;
+      --good-wash: rgba(111, 190, 134, 0.14);
+      --critical: #e08276;
+      --critical-wash: rgba(224, 130, 118, 0.14);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17131a;
+    --surface: #201a21;
+    --surface-alt: #2a222b;
+    --border: #382e37;
+    --grid: #382e37;
+    --ink: #f0e9ec;
+    --ink-muted: #a79aa2;
+    --ink-faint: #6f636b;
+    --accent: #e38aa6;
+    --accent-deep: #f3b0c4;
+    --accent-wash: rgba(227, 138, 166, 0.12);
+    --accent-wash-strong: rgba(227, 138, 166, 0.20);
+    --good: #6fbe86;
+    --good-wash: rgba(111, 190, 134, 0.14);
+    --critical: #e08276;
+    --critical-wash: rgba(224, 130, 118, 0.14);
+  }
+  :root[data-theme="light"] {
+    --bg: #faf7f5;
+    --surface: #ffffff;
+    --surface-alt: #f2ebe8;
+    --border: #e6dcd8;
+    --grid: #e4dcd8;
+    --ink: #241c22;
+    --ink-muted: #8a7e86;
+    --ink-faint: #b3a7ad;
+    --accent: #a24463;
+    --accent-deep: #7a3049;
+    --accent-wash: rgba(162, 68, 99, 0.10);
+    --accent-wash-strong: rgba(162, 68, 99, 0.18);
+    --good: #3f8557;
+    --good-wash: rgba(63, 133, 87, 0.12);
+    --critical: #b5423b;
+    --critical-wash: rgba(181, 66, 59, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: auto; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  .dashboard {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .masthead-title-group { display: flex; flex-direction: column; gap: 6px; }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  h1.masthead-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 30px;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .masthead-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .range-badge {
+    font-size: 13px;
+    color: var(--ink-muted);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: var(--radius-chip);
+    font-variant-numeric: tabular-nums;
+  }
+  .gap-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--critical);
+    background: var(--critical-wash);
+    border: 1px solid color-mix(in srgb, var(--critical) 35%, transparent);
+    padding: 6px 12px 6px 10px;
+    border-radius: var(--radius-chip);
+  }
+  .gap-chip::before { content: "!"; display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: var(--critical); color: var(--surface); font-size: 11px; font-weight: 800; }
+
+  /* ---------- KPI strip ---------- */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .kpi-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kpi-label { font-size: 12.5px; color: var(--ink-muted); font-weight: 500; }
+  .kpi-value { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+  .kpi-delta { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; width: fit-content; padding: 3px 8px 3px 7px; border-radius: var(--radius-chip); }
+  .kpi-delta.up { color: var(--good); background: var(--good-wash); }
+  .kpi-delta.down { color: var(--critical); background: var(--critical-wash); }
+  .kpi-delta .arrow { font-size: 11px; }
+  .kpi-delta .vs { color: var(--ink-faint); font-weight: 400; margin-left: 2px; }
+
+  /* ---------- Cards ---------- */
+  .chart-card, .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 20px 22px 16px;
+  }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 8px; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .card-sub { font-size: 12.5px; color: var(--ink-muted); }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+
+  /* ---------- Filter row ---------- */
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .filter-label { font-size: 12.5px; color: var(--ink-muted); font-weight: 500; margin-right: 2px; }
+  .step-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 32px;
+    flex: none;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--ink-muted);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .step-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .step-btn:disabled { opacity: 0.3; cursor: default; }
+  .step-btn:disabled:hover { color: var(--ink-muted); border-color: var(--border); }
+  .date-pill-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .date-pill {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 7px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .date-pill:hover { color: var(--ink); background: var(--border); }
+  .date-pill.active { background: var(--accent); color: var(--surface); }
+  .date-pill.active:hover { background: var(--accent); color: var(--surface); }
+  .date-pill .latest-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+  .filter-total { margin-left: auto; font-size: 12.5px; color: var(--ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .filter-total strong { color: var(--ink); font-weight: 700; }
+
+  @media (max-width: 760px) {
+    .filter-total { margin-left: 0; width: 100%; order: 3; }
+  }
+
+  svg text { font-family: var(--font-body); fill: var(--ink-muted); }
+  .axis-line { stroke: var(--grid); stroke-width: 1; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .series-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .series-area { fill: var(--accent-wash); }
+  .series-dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+  .crosshair-line { stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0; pointer-events: none; }
+  .end-label-value { font-size: 13px; font-weight: 700; fill: var(--accent-deep); }
+  .end-label-sub { font-size: 10.5px; fill: var(--ink-muted); }
+  .hit-col { fill: transparent; }
+  .bar-hit { fill: transparent; cursor: pointer; }
+  .bar-rect { fill: var(--accent); }
+  .bar-rect.hover { fill: var(--accent-deep); }
+  .bar-label-name { font-size: 12px; fill: var(--ink); }
+  .bar-label-value { font-size: 11.5px; font-weight: 700; fill: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 8px;
+    padding: 8px 11px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+    transform: translate(-50%, -110%);
+    opacity: 0;
+    transition: opacity 0.08s ease;
+    white-space: nowrap;
+    z-index: 5;
+  }
+  .tooltip.visible { opacity: 1; }
+  .tooltip .tt-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tooltip .tt-label { color: color-mix(in srgb, var(--bg) 70%, transparent); margin-left: 4px; }
+  .chart-wrap { position: relative; }
+
+  /* ---------- Table ---------- */
+  .table-scroll { overflow-x: auto; }
+  table.daily-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.daily-table th, table.daily-table td {
+    padding: 9px 12px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  table.daily-table th:first-child, table.daily-table td:first-child { text-align: left; }
+  table.daily-table thead th {
+    font-weight: 600;
+    color: var(--ink-muted);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+  table.daily-table tbody td { border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; color: var(--ink); }
+  table.daily-table tbody tr:last-child td { border-bottom: none; }
+  table.daily-table tbody tr:hover td { background: var(--surface-alt); }
+  table.daily-table tbody tr.latest td { font-weight: 700; }
+  table.daily-table tbody tr.zero-row td { color: var(--ink-faint); }
+  table.daily-table td.no-name { text-align: left; }
+  .no-sale-pill {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    background: var(--surface-alt);
+    border-radius: var(--radius-chip);
+    padding: 1px 8px;
+  }
+
+  footer.note { font-size: 12px; color: var(--ink-faint); padding-top: 4px; }
+
+  a, button { font-family: inherit; }
+  [tabindex]:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  @media (max-width: 760px) {
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .chart-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="dashboard">
+  <header class="masthead">
+    <div class="masthead-title-group">
+      <span class="eyebrow">Verish 자사몰 · 상품 라인 성과</span>
+      <h1 class="masthead-title">첫 구매 전용 퍼포먼스</h1>
+    </div>
+    <div class="masthead-meta">
+      <span class="range-badge" id="rangeBadge">—</span>
+      <span class="gap-chip" id="gapChip" hidden></span>
+    </div>
+  </header>
+
+  <section class="kpi-strip" id="kpiStrip"></section>
+
+  <section class="chart-row">
+    <div class="chart-card">
+      <div class="card-head">
+        <span class="card-title">일별 합계 매출 추이</span>
+        <span class="card-sub" id="revenueSub"></span>
+      </div>
+      <div class="chart-wrap" id="revenueChartWrap"></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-head">
+        <span class="card-title">일별 주문건수 추이</span>
+      </div>
+      <div class="chart-wrap" id="ordersChartWrap"></div>
+    </div>
+  </section>
+
+  <section class="chart-card">
+    <div class="card-head">
+      <span class="card-title">상품별 상세 (날짜 필터)</span>
+      <span class="card-sub">21개 추적 상품 전체 · 0건 판매 상품 포함</span>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">날짜</span>
+      <button type="button" class="step-btn" id="datePrev" aria-label="이전 날짜">‹</button>
+      <div class="date-pill-group" id="datePillGroup" role="tablist" aria-label="날짜 선택"></div>
+      <button type="button" class="step-btn" id="dateNext" aria-label="다음 날짜">›</button>
+      <span class="filter-total" id="filterTotal"></span>
+    </div>
+    <div class="chart-wrap" id="rankChartWrap"></div>
+    <div class="table-scroll" style="margin-top: 18px;">
+      <table class="daily-table" id="productTable">
+        <thead>
+          <tr>
+            <th class="no-name">상품명</th>
+            <th>매출</th>
+            <th>주문건수</th>
+            <th>객단가</th>
+            <th>일 매출 대비 비중</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="table-card">
+    <div class="card-head">
+      <span class="card-title">일별 합계 데이터</span>
+      <span class="card-sub">스프레드시트 시트1 기준</span>
+    </div>
+    <div class="table-scroll">
+      <table class="daily-table" id="dailyTable">
+        <thead>
+          <tr>
+            <th>날짜</th>
+            <th>매출</th>
+            <th>주문건수</th>
+            <th>객단가</th>
+            <th>일 매출 대비 비중</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="note">자동 스케줄(매일 11시)로 집계되는 Cafe24 데이터의 스냅샷입니다 · 데이터 출처: 자사몰 [첫 구매 전용] 상품 매출 현황 시트 · 2026-07-26은 원본 시트에서 상품번호 1343이 두 개 상품명으로 중복 집계된 것을 그대로 반영했습니다(원인 확인 필요)</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var dailyTotals = [
+    { date: "2026-07-21", revenue: 5980973, orders: 269, aov: 37830, share: 6.14 },
+    { date: "2026-07-22", revenue: 4874561, orders: 217, aov: 38720, share: 5.52 },
+    { date: "2026-07-23", revenue: 5254033, orders: 234, aov: 38401, share: 6.22 },
+    { date: "2026-07-24", revenue: 3761987, orders: 167, aov: 44080, share: 5.13 },
+    { date: "2026-07-25", revenue: 3861361, orders: 167, aov: 41335, share: 5.29 },
+    { date: "2026-07-26", revenue: 4693240, orders: 199, aov: 41079, share: 5.64 },
+    { date: "2026-07-27", revenue: 5124964, orders: 229, aov: 41336, share: 5.12 },
+    { date: "2026-07-28", revenue: 6050728, orders: 279, aov: 35619, share: 6.03 },
+    { date: "2026-07-29", revenue: 6082379, orders: 284, aov: 34137, share: 6.21 }
+  ];
+
+  // Full per-product breakdown for every date (all 21 tracked SKUs, incl. zero-sale rows)
+  var dailyProducts = {
+    "2026-07-21": [
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 1465165, orders: 50, aov: 49486, share: 1.5 },
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1311467, orders: 74, aov: 28738, share: 1.35 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 606588, orders: 29, aov: 33750, share: 0.62 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 522709, orders: 26, aov: 31907, share: 0.54 },
+      { no: 1337, name: "모달 브라탑", revenue: 352906, orders: 19, aov: 48122, share: 0.36 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 351960, orders: 12, aov: 40463, share: 0.36 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 326957, orders: 16, aov: 43897, share: 0.34 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 278660, orders: 9, aov: 48394, share: 0.29 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 272300, orders: 14, aov: 35486, share: 0.28 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 236511, orders: 11, aov: 55779, share: 0.24 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 166050, orders: 9, aov: 33072, share: 0.17 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 89700, orders: 6, aov: 42883, share: 0.09 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-22": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1318620, orders: 71, aov: 34641, share: 1.49 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 1101373, orders: 37, aov: 53459, share: 1.25 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 503055, orders: 28, aov: 30592, share: 0.57 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 364794, orders: 18, aov: 45769, share: 0.41 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 332108, orders: 11, aov: 72701, share: 0.38 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 309081, orders: 10, aov: 45105, share: 0.35 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 221400, orders: 12, aov: 36667, share: 0.25 },
+      { no: 1337, name: "모달 브라탑", revenue: 209300, orders: 13, aov: 31096, share: 0.24 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 202950, orders: 10, aov: 31800, share: 0.23 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 149500, orders: 9, aov: 31639, share: 0.17 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 116700, orders: 5, aov: 58970, share: 0.13 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 27230, orders: 1, aov: 30230, share: 0.03 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 18450, orders: 1, aov: 21450, share: 0.02 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-23": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1475248, orders: 84, aov: 28455, share: 1.75 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 1032487, orders: 35, aov: 51320, share: 1.22 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 571766, orders: 18, aov: 59306, share: 0.68 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 488600, orders: 28, aov: 33300, share: 0.58 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 338910, orders: 11, aov: 40847, share: 0.4 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 326645, orders: 15, aov: 61033, share: 0.39 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 272300, orders: 14, aov: 28571, share: 0.32 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 233691, orders: 11, aov: 39236, share: 0.28 },
+      { no: 1337, name: "모달 브라탑", revenue: 206468, orders: 12, aov: 24070, share: 0.24 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 179500, orders: 7, aov: 59077, share: 0.21 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 74750, orders: 3, aov: 47750, share: 0.09 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 35218, orders: 1, aov: 114800, share: 0.04 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 18450, orders: 1, aov: 21450, share: 0.02 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-24": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1137047, orders: 62, aov: 42723, share: 1.55 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 861479, orders: 29, aov: 46272, share: 1.18 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 314440, orders: 10, aov: 37229, share: 0.43 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 297762, orders: 15, aov: 44739, share: 0.41 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 258987, orders: 14, aov: 33996, share: 0.35 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 249710, orders: 8, aov: 73889, share: 0.34 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 194401, orders: 10, aov: 47555, share: 0.27 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 127647, orders: 7, aov: 48864, share: 0.17 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 113352, orders: 6, aov: 66733, share: 0.15 },
+      { no: 1337, name: "모달 브라탑", revenue: 102132, orders: 5, aov: 44770, share: 0.14 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 77800, orders: 4, aov: 22450, share: 0.11 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 27230, orders: 1, aov: 30230, share: 0.04 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-25": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1003487, orders: 54, aov: 31926, share: 1.38 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 925751, orders: 31, aov: 59149, share: 1.27 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 309170, orders: 10, aov: 44687, share: 0.42 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 300926, orders: 10, aov: 43627, share: 0.41 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 291803, orders: 15, aov: 28315, share: 0.4 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 207554, orders: 10, aov: 46156, share: 0.28 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 155600, orders: 8, aov: 35950, share: 0.21 },
+      { no: 1337, name: "모달 브라탑", revenue: 149500, orders: 9, aov: 35848, share: 0.2 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 147600, orders: 7, aov: 41050, share: 0.2 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 119600, orders: 8, aov: 48038, share: 0.16 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 92250, orders: 5, aov: 49310, share: 0.13 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 91990, orders: 3, aov: 111883, share: 0.13 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 66130, orders: 2, aov: 48530, share: 0.09 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-26": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1355559, orders: 72, aov: 32540, share: 1.63 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 1096851, orders: 37, aov: 50635, share: 1.32 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 451900, orders: 24, aov: 31223, share: 0.54 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 360340, orders: 11, aov: 54725, share: 0.43 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 346727, orders: 11, aov: 59288, share: 0.42 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 306964, orders: 14, aov: 72186, share: 0.37 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 189500, orders: 10, aov: 36500, share: 0.23 },
+      { no: 1343, name: "에센셜핏 백리스 브라렛", revenue: 174645, orders: 8, aov: 61858, share: 0.21 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 171833, orders: 9, aov: 63821, share: 0.21 },
+      { no: 1337, name: "모달 브라탑", revenue: 160541, orders: 9, aov: 46350, share: 0.19 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 55350, orders: 3, aov: 21450, share: 0.07 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 23030, orders: 1, aov: 26030, share: 0.03 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-27": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 1417477, orders: 79, aov: 27375, share: 1.42 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 908467, orders: 30, aov: 55780, share: 0.91 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 584643, orders: 19, aov: 59555, share: 0.58 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 527221, orders: 24, aov: 57609, share: 0.53 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 445740, orders: 24, aov: 33212, share: 0.45 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 249777, orders: 8, aov: 64051, share: 0.25 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 228982, orders: 11, aov: 45022, share: 0.23 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 178416, orders: 8, aov: 35116, share: 0.18 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 149500, orders: 10, aov: 40470, share: 0.15 },
+      { no: 1337, name: "모달 브라탑", revenue: 119600, orders: 6, aov: 35308, share: 0.12 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 107087, orders: 5, aov: 48872, share: 0.11 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 105546, orders: 5, aov: 52036, share: 0.11 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 75278, orders: 3, aov: 49100, share: 0.08 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 27230, orders: 1, aov: 30230, share: 0.03 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-28": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 2116750, orders: 117, aov: 25151, share: 2.11 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 1247779, orders: 41, aov: 57370, share: 1.24 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 593300, orders: 33, aov: 24242, share: 0.59 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 535475, orders: 17, aov: 57621, share: 0.53 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 343200, orders: 11, aov: 49255, share: 0.34 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 310559, orders: 16, aov: 42225, share: 0.31 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 217491, orders: 11, aov: 42301, share: 0.22 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 175050, orders: 9, aov: 46961, share: 0.17 },
+      { no: 1337, name: "모달 브라탑", revenue: 146975, orders: 9, aov: 42570, share: 0.15 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 134550, orders: 9, aov: 29172, share: 0.13 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 108524, orders: 5, aov: 49160, share: 0.11 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 92250, orders: 5, aov: 24310, share: 0.09 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 28825, orders: 1, aov: 84890, share: 0.03 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ],
+    "2026-07-29": [
+      { no: 748, name: "쿨핏 브라 오프숄더 볼륨", revenue: 2519256, orders: 139, aov: 26894, share: 2.57 },
+      { no: 871, name: "쿨핏 브라 볼륨핏", revenue: 856902, orders: 29, aov: 47891, share: 0.87 },
+      { no: 1340, name: "아이스온 오프숄더 브라", revenue: 608131, orders: 33, aov: 34041, share: 0.62 },
+      { no: 881, name: "쿨핏 브라 컴포트 BIG", revenue: 373230, orders: 12, aov: 46923, share: 0.38 },
+      { no: 880, name: "쿨핏 브라 볼륨핏 PLUS", revenue: 319057, orders: 10, aov: 88632, share: 0.33 },
+      { no: 1242, name: "아이스온 푸시업 브라", revenue: 318414, orders: 14, aov: 37332, share: 0.33 },
+      { no: 1341, name: "에센셜핏 홀터 브라렛", revenue: 239850, orders: 12, aov: 36908, share: 0.24 },
+      { no: 1337, name: "모달 브라탑", revenue: 206747, orders: 12, aov: 31201, share: 0.21 },
+      { no: 1343, name: "에센셜핏 스쿱 브라렛", revenue: 166050, orders: 9, aov: 40939, share: 0.17 },
+      { no: 1339, name: "아이스온 에어리 브라", revenue: 155600, orders: 8, aov: 36688, share: 0.16 },
+      { no: 1338, name: "모달 U넥 브라탑", revenue: 145977, orders: 9, aov: 40007, share: 0.15 },
+      { no: 1342, name: "에센셜핏 백리스 브라렛", revenue: 110700, orders: 6, aov: 28417, share: 0.11 },
+      { no: 1268, name: "코튼 립 스퀘어넥 브라탑", revenue: 62465, orders: 2, aov: 112590, share: 0.06 },
+      { no: 1237, name: "아이스온 에어리 브라 (구)", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 1035, name: "쿨핏 브라 볼륨 리프트업", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 963, name: "웜터치 브라탑 롱슬리브", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 877, name: "모달 브라탑 롱", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 876, name: "모달 브라탑 크롭", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 875, name: "쿨핏 브라 시그니처&팬티 set", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 874, name: "쿨핏 팬티", revenue: 0, orders: 0, aov: 0, share: 0 },
+      { no: 873, name: "쿨핏 브라 시그니처", revenue: 0, orders: 0, aov: 0, share: 0 }
+    ]
+  };
+  var productDates = Object.keys(dailyProducts); // ascending, matches dailyTotals order
+  var selectedDateIdx = productDates.length - 1;
+
+  var KNOWN_GAP_DATES = ["2026-07-30"];
+
+  var fmtInt = function (n) { return Math.round(n).toLocaleString("ko-KR"); };
+  var fmtWon = function (n) { return "₩" + fmtInt(n); };
+  var fmtPct = function (n) { return n.toFixed(2) + "%"; };
+  var fmtDateShort = function (iso) { var p = iso.split("-"); return p[1] + "." + p[2]; };
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  // ---------- Masthead ----------
+  var first = dailyTotals[0].date, last = dailyTotals[dailyTotals.length - 1].date;
+  document.getElementById("rangeBadge").textContent = first + " – " + last + " (" + dailyTotals.length + "일)";
+  var gapChip = document.getElementById("gapChip");
+  if (KNOWN_GAP_DATES.length) {
+    gapChip.hidden = false;
+    gapChip.textContent = KNOWN_GAP_DATES.join(", ") + " 데이터 없음";
+  }
+
+  // ---------- KPI strip ----------
+  var latest = dailyTotals[dailyTotals.length - 1];
+  var prev = dailyTotals[dailyTotals.length - 2];
+
+  function deltaTile(label, value, curr, prevVal, formatter, isPct) {
+    var tile = el("div", "kpi-tile");
+    tile.appendChild(el("div", "kpi-label", label));
+    tile.appendChild(el("div", "kpi-value", value));
+    var diff = curr - prevVal;
+    var pct = prevVal !== 0 ? (diff / prevVal) * 100 : 0;
+    var up = diff >= 0;
+    var delta = el("div", "kpi-delta " + (up ? "up" : "down"));
+    var arrow = el("span", "arrow", up ? "▲" : "▼");
+    delta.appendChild(arrow);
+    var amt = isPct ? (Math.abs(diff)).toFixed(2) + "p" : Math.abs(pct).toFixed(1) + "%";
+    delta.appendChild(document.createTextNode(amt));
+    delta.appendChild(el("span", "vs", "전일 대비"));
+    tile.appendChild(delta);
+    return tile;
+  }
+
+  var kpiStrip = document.getElementById("kpiStrip");
+  kpiStrip.appendChild(deltaTile("최신일(" + fmtDateShort(latest.date) + ") 합계 매출", fmtWon(latest.revenue), latest.revenue, prev.revenue, fmtWon, false));
+  kpiStrip.appendChild(deltaTile("주문건수", fmtInt(latest.orders) + "건", latest.orders, prev.orders, fmtInt, false));
+  kpiStrip.appendChild(deltaTile("객단가 (주문 전체 결제금액 평균)", fmtWon(latest.aov), latest.aov, prev.aov, fmtWon, false));
+  kpiStrip.appendChild(deltaTile("일 매출 대비 비중", fmtPct(latest.share), latest.share, prev.share, fmtPct, true));
+
+  document.getElementById("revenueSub").textContent = "최근 " + dailyTotals.length + "일 · 최신일 " + fmtWon(latest.revenue);
+
+  // ================= Line/area trend chart =================
+  function renderTrendChart(container, data, valueKey, opts) {
+    opts = opts || {};
+    var W = container.clientWidth || 480, H = opts.height || 220;
+    var padL = 46, padR = 16, padT = 16, padB = 26;
+    var innerW = W - padL - padR, innerH = H - padT - padB;
+
+    var values = data.map(function (d) { return d[valueKey]; });
+    var maxV = Math.max.apply(null, values);
+    var niceMax = (function (v) {
+      if (v <= 0) return 10;
+      var mag = Math.pow(10, Math.floor(Math.log10(v)));
+      var norm = v / mag;
+      var step = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+      return step * mag;
+    })(maxV * 1.15);
+
+    function xAt(i) { return padL + (data.length === 1 ? innerW / 2 : (innerW * i) / (data.length - 1)); }
+    function yAt(v) { return padT + innerH - (innerH * v) / niceMax; }
+
+    var svgNS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", H);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", opts.ariaLabel || "추이 차트");
+
+    // gridlines (0, mid, max)
+    [0, 0.5, 1].forEach(function (t) {
+      var v = niceMax * t;
+      var y = yAt(v);
+      var line = document.createElementNS(svgNS, "line");
+      line.setAttribute("x1", padL); line.setAttribute("x2", W - padR);
+      line.setAttribute("y1", y); line.setAttribute("y2", y);
+      line.setAttribute("class", "gridline");
+      svg.appendChild(line);
+      var txt = document.createElementNS(svgNS, "text");
+      txt.setAttribute("x", padL - 8); txt.setAttribute("y", y + 4);
+      txt.setAttribute("text-anchor", "end"); txt.setAttribute("font-size", "10.5");
+      txt.textContent = opts.compact ? compactNum(v) : fmtInt(v);
+      svg.appendChild(txt);
+    });
+
+    // x labels (first, mid, last)
+    [0, Math.floor((data.length - 1) / 2), data.length - 1].forEach(function (i) {
+      var txt = document.createElementNS(svgNS, "text");
+      txt.setAttribute("x", xAt(i)); txt.setAttribute("y", H - 6);
+      txt.setAttribute("text-anchor", "middle"); txt.setAttribute("font-size", "10.5");
+      txt.textContent = fmtDateShort(data[i].date);
+      svg.appendChild(txt);
+    });
+
+    // area
+    var areaPts = data.map(function (d, i) { return xAt(i) + "," + yAt(d[valueKey]); }).join(" L ");
+    var areaPath = document.createElementNS(svgNS, "path");
+    areaPath.setAttribute("d", "M " + xAt(0) + "," + yAt(0) + " L " + areaPts + " L " + xAt(data.length - 1) + "," + yAt(0) + " Z");
+    areaPath.setAttribute("class", "series-area");
+    svg.appendChild(areaPath);
+
+    // line
+    var linePath = document.createElementNS(svgNS, "path");
+    linePath.setAttribute("d", "M " + areaPts);
+    linePath.setAttribute("class", "series-line");
+    svg.appendChild(linePath);
+
+    // crosshair
+    var crosshair = document.createElementNS(svgNS, "line");
+    crosshair.setAttribute("y1", padT); crosshair.setAttribute("y2", H - padB);
+    crosshair.setAttribute("class", "crosshair-line");
+    svg.appendChild(crosshair);
+
+    // dots (all, small; end dot bigger)
+    data.forEach(function (d, i) {
+      var r = i === data.length - 1 ? 4.5 : 3;
+      var dot = document.createElementNS(svgNS, "circle");
+      dot.setAttribute("cx", xAt(i)); dot.setAttribute("cy", yAt(d[valueKey]));
+      dot.setAttribute("r", r);
+      dot.setAttribute("class", "series-dot");
+      svg.appendChild(dot);
+    });
+
+    // end label
+    var lastI = data.length - 1;
+    var endLabel = document.createElementNS(svgNS, "text");
+    endLabel.setAttribute("x", xAt(lastI));
+    endLabel.setAttribute("y", yAt(data[lastI][valueKey]) - 12);
+    endLabel.setAttribute("text-anchor", "end");
+    endLabel.setAttribute("class", "end-label-value");
+    endLabel.textContent = opts.compact ? compactNum(data[lastI][valueKey]) : fmtInt(data[lastI][valueKey]);
+    svg.appendChild(endLabel);
+
+    // mount the svg first, then attach the tooltip as a sibling on top of it —
+    // clearing container after ensureTooltip() would wipe the tooltip node
+    container.innerHTML = "";
+    container.appendChild(svg);
+    var tooltip = ensureTooltip(container);
+
+    // hit columns for hover
+    data.forEach(function (d, i) {
+      var bandW = innerW / data.length;
+      var hit = document.createElementNS(svgNS, "rect");
+      hit.setAttribute("x", xAt(i) - bandW / 2);
+      hit.setAttribute("y", padT);
+      hit.setAttribute("width", bandW);
+      hit.setAttribute("height", innerH);
+      hit.setAttribute("class", "hit-col");
+      hit.setAttribute("tabindex", "0");
+      var show = function () {
+        crosshair.setAttribute("x1", xAt(i)); crosshair.setAttribute("x2", xAt(i));
+        crosshair.style.opacity = "1";
+        var val = opts.tooltipFormatter ? opts.tooltipFormatter(d) : fmtInt(d[valueKey]);
+        showTooltip(tooltip, container, xAt(i), yAt(d[valueKey]), d.date, val);
+      };
+      hit.addEventListener("pointerenter", show);
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("focus", show);
+      hit.addEventListener("pointerleave", function () { crosshair.style.opacity = "0"; hideTooltip(tooltip); });
+      hit.addEventListener("blur", function () { crosshair.style.opacity = "0"; hideTooltip(tooltip); });
+      svg.appendChild(hit);
+    });
+  }
+
+  function compactNum(v) {
+    if (Math.abs(v) >= 1000000) return (v / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    if (Math.abs(v) >= 1000) return (v / 1000).toFixed(0) + "K";
+    return fmtInt(v);
+  }
+
+  function ensureTooltip(container) {
+    var tt = el("div", "tooltip");
+    container.style.position = "relative";
+    container.appendChild(tt);
+    return tt;
+  }
+  function showTooltip(tt, container, x, y, dateLabel, valueText) {
+    tt.innerHTML = "";
+    var valSpan = el("span", "tt-value", valueText);
+    var labelSpan = el("span", "tt-label", dateLabel);
+    tt.appendChild(valSpan);
+    tt.appendChild(labelSpan);
+    tt.style.left = x + "px";
+    tt.style.top = y + "px";
+    tt.classList.add("visible");
+  }
+  function hideTooltip(tt) { tt.classList.remove("visible"); }
+
+  // ================= Horizontal bar chart =================
+  function renderRankChart(container, items) {
+    var W = container.clientWidth || 460;
+    var rowH = 26, gap = 6;
+    var padL = 8, padR = 54, padT = 4;
+    var maxLabelW = 132;
+    var H = items.length * (rowH + gap) - gap + padT + 4;
+    var chartInnerW = W - padL - padR - maxLabelW;
+    var maxV = Math.max.apply(null, items.map(function (d) { return d.revenue; }));
+
+    var svgNS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", H);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "상품별 매출 순위");
+
+    container.innerHTML = "";
+    container.appendChild(svg);
+    var tooltip = ensureTooltip(container);
+
+    items.forEach(function (d, i) {
+      var y = padT + i * (rowH + gap);
+      var barW = Math.max(2, (chartInnerW * d.revenue) / maxV);
+
+      var name = document.createElementNS(svgNS, "text");
+      name.setAttribute("x", padL);
+      name.setAttribute("y", y + rowH / 2 + 4);
+      name.setAttribute("class", "bar-label-name");
+      name.textContent = d.name.length > 15 ? d.name.slice(0, 14) + "…" : d.name;
+      svg.appendChild(name);
+
+      var barX = padL + maxLabelW;
+      var rect = document.createElementNS(svgNS, "rect");
+      rect.setAttribute("x", barX);
+      rect.setAttribute("y", y + 3);
+      rect.setAttribute("width", barW);
+      rect.setAttribute("height", rowH - 6);
+      rect.setAttribute("rx", 4);
+      rect.setAttribute("class", "bar-rect");
+      svg.appendChild(rect);
+
+      var valueLabel = document.createElementNS(svgNS, "text");
+      var labelInside = barW > 60;
+      valueLabel.setAttribute("y", y + rowH / 2 + 4);
+      valueLabel.setAttribute("class", "bar-label-value");
+      valueLabel.textContent = compactNum(d.revenue);
+      if (labelInside) {
+        valueLabel.setAttribute("x", barX + barW - 8);
+        valueLabel.setAttribute("text-anchor", "end");
+        valueLabel.style.fill = "var(--surface)";
+      } else {
+        valueLabel.setAttribute("x", barX + barW + 8);
+        valueLabel.setAttribute("text-anchor", "start");
+      }
+      svg.appendChild(valueLabel);
+
+      var hit = document.createElementNS(svgNS, "rect");
+      hit.setAttribute("x", barX);
+      hit.setAttribute("y", y);
+      hit.setAttribute("width", chartInnerW);
+      hit.setAttribute("height", rowH);
+      hit.setAttribute("class", "bar-hit");
+      hit.setAttribute("tabindex", "0");
+      var show = function () {
+        rect.classList.add("hover");
+        showTooltip(tooltip, container, barX + barW / 2, y, d.name, fmtWon(d.revenue) + " · " + d.orders + "건");
+      };
+      var hide = function () { rect.classList.remove("hover"); hideTooltip(tooltip); };
+      hit.addEventListener("pointerenter", show);
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("focus", show);
+      hit.addEventListener("pointerleave", hide);
+      hit.addEventListener("blur", hide);
+      svg.appendChild(hit);
+    });
+  }
+
+  // ---------- product-detail table (per selected date) ----------
+  var productTbody = document.querySelector("#productTable tbody");
+  function renderProductTable(dateKey) {
+    var rows = dailyProducts[dateKey].slice().sort(function (a, b) { return b.revenue - a.revenue; });
+    productTbody.innerHTML = "";
+    rows.forEach(function (d) {
+      var tr = el("tr", d.revenue === 0 ? "zero-row" : "");
+      var nameTd = el("td", "no-name", d.name);
+      tr.appendChild(nameTd);
+      if (d.revenue === 0) {
+        var td = el("td");
+        var pill = el("span", "no-sale-pill", "판매 없음");
+        td.appendChild(pill);
+        tr.appendChild(td);
+        tr.appendChild(el("td", null, "0건"));
+        tr.appendChild(el("td", null, "—"));
+        tr.appendChild(el("td", null, "—"));
+      } else {
+        tr.appendChild(el("td", null, fmtWon(d.revenue)));
+        tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
+        tr.appendChild(el("td", null, fmtWon(d.aov)));
+        tr.appendChild(el("td", null, fmtPct(d.share)));
+      }
+      productTbody.appendChild(tr);
+    });
+  }
+
+  function renderFilterTotal(dateKey) {
+    var summary = dailyTotals.filter(function (d) { return d.date === dateKey; })[0];
+    var totalEl = document.getElementById("filterTotal");
+    if (!summary) { totalEl.textContent = ""; return; }
+    var soldCount = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; }).length;
+    totalEl.innerHTML = "";
+    totalEl.appendChild(document.createTextNode(soldCount + "/" + dailyProducts[dateKey].length + "개 상품 판매 · 합계 "));
+    var strong = el("strong", null, fmtWon(summary.revenue));
+    totalEl.appendChild(strong);
+    totalEl.appendChild(document.createTextNode(" · " + summary.orders + "건"));
+  }
+
+  // ---------- render charts ----------
+  function draw() {
+    renderTrendChart(document.getElementById("revenueChartWrap"), dailyTotals, "revenue", {
+      ariaLabel: "일별 합계 매출 추이",
+      compact: true,
+      tooltipFormatter: function (d) { return fmtWon(d.revenue); }
+    });
+    renderTrendChart(document.getElementById("ordersChartWrap"), dailyTotals, "orders", {
+      ariaLabel: "일별 주문건수 추이",
+      height: 190,
+      tooltipFormatter: function (d) { return fmtInt(d.orders) + "건"; }
+    });
+    var dateKey = productDates[selectedDateIdx];
+    var soldItems = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; });
+    renderRankChart(document.getElementById("rankChartWrap"), soldItems.length ? soldItems : [{ name: "판매 상품 없음", revenue: 0, orders: 0 }]);
+  }
+  draw();
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(draw, 120);
+  });
+
+  // ---------- date filter wiring (segmented pill group) ----------
+  var datePillGroup = document.getElementById("datePillGroup");
+  var datePrev = document.getElementById("datePrev");
+  var dateNext = document.getElementById("dateNext");
+  var pillEls = [];
+
+  productDates.forEach(function (d, i) {
+    var pill = el("button", "date-pill", fmtDateShort(d));
+    pill.type = "button";
+    pill.setAttribute("role", "tab");
+    pill.dataset.idx = i;
+    if (i === productDates.length - 1) {
+      var dot = el("span", "latest-dot");
+      pill.appendChild(dot);
+    }
+    pill.addEventListener("click", function () { applyDate(i); });
+    datePillGroup.appendChild(pill);
+    pillEls.push(pill);
+  });
+
+  function applyDate(idx) {
+    selectedDateIdx = Math.max(0, Math.min(productDates.length - 1, idx));
+    var dateKey = productDates[selectedDateIdx];
+    pillEls.forEach(function (p, i) {
+      var active = i === selectedDateIdx;
+      p.classList.toggle("active", active);
+      p.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    pillEls[selectedDateIdx].scrollIntoView({ block: "nearest", inline: "nearest" });
+    datePrev.disabled = selectedDateIdx === 0;
+    dateNext.disabled = selectedDateIdx === productDates.length - 1;
+    renderFilterTotal(dateKey);
+    renderProductTable(dateKey);
+    var soldItems = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; });
+    renderRankChart(document.getElementById("rankChartWrap"), soldItems.length ? soldItems : [{ name: "판매 상품 없음", revenue: 0, orders: 0 }]);
+  }
+
+  datePrev.addEventListener("click", function () { applyDate(selectedDateIdx - 1); });
+  dateNext.addEventListener("click", function () { applyDate(selectedDateIdx + 1); });
+
+  applyDate(selectedDateIdx);
+
+  // ---------- daily totals table ----------
+  var tbody = document.querySelector("#dailyTable tbody");
+  dailyTotals.slice().reverse().forEach(function (d, idx) {
+    var tr = el("tr", idx === 0 ? "latest" : "");
+    tr.appendChild(el("td", null, d.date));
+    tr.appendChild(el("td", null, fmtWon(d.revenue)));
+    tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
+    tr.appendChild(el("td", null, fmtWon(d.aov)));
+    tr.appendChild(el("td", null, fmtPct(d.share)));
+    tbody.appendChild(tr);
+  });
+})();
+</script>
