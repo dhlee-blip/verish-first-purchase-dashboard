@@ -1,1000 +1,673 @@
-<title>첫 구매 전용 퍼포먼스 대시보드</title>
+<title>첫구매 라인업 진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root {
-    --bg: #faf7f5;
-    --surface: #ffffff;
-    --surface-alt: #f2ebe8;
-    --border: #e6dcd8;
-    --grid: #e4dcd8;
-    --ink: #241c22;
-    --ink-muted: #8a7e86;
-    --ink-faint: #b3a7ad;
-    --accent: #a24463;
-    --accent-deep: #7a3049;
-    --accent-wash: rgba(162, 68, 99, 0.10);
-    --accent-wash-strong: rgba(162, 68, 99, 0.18);
-    --good: #3f8557;
-    --good-wash: rgba(63, 133, 87, 0.12);
-    --critical: #b5423b;
-    --critical-wash: rgba(181, 66, 59, 0.12);
-    --radius-card: 14px;
-    --radius-chip: 999px;
-    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --ground:      #F7F8FA;
+    --surface:     #FFFFFF;
+    --surface-alt: #EEF1F5;
+    --line:        #D8DEE6;
+    --line-soft:   #E7EBF0;
+    --ink:         #16202A;
+    --ink-2:       #3D4C5A;
+    --muted:       #667887;
+    --accent:      #1F5F8B;
+    --accent-soft: #DCE8F1;
+    --neutral-bar: #8FA3B3;
+    --good:        #2F7A4F;
+    --good-soft:   #DDEDE3;
+    --warn:        #A8701C;
+    --warn-soft:   #F6E9D4;
+    --crit:        #A63A3A;
+    --crit-soft:   #F4DEDE;
+    --shadow:      0 1px 2px rgba(22, 32, 42, .06), 0 8px 24px -16px rgba(22, 32, 42, .18);
+    --r:           10px;
   }
-
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #17131a;
-      --surface: #201a21;
-      --surface-alt: #2a222b;
-      --border: #382e37;
-      --grid: #382e37;
-      --ink: #f0e9ec;
-      --ink-muted: #a79aa2;
-      --ink-faint: #6f636b;
-      --accent: #e38aa6;
-      --accent-deep: #f3b0c4;
-      --accent-wash: rgba(227, 138, 166, 0.12);
-      --accent-wash-strong: rgba(227, 138, 166, 0.20);
-      --good: #6fbe86;
-      --good-wash: rgba(111, 190, 134, 0.14);
-      --critical: #e08276;
-      --critical-wash: rgba(224, 130, 118, 0.14);
+    :root:not([data-theme="light"]) {
+      --ground:      #0F1419;
+      --surface:     #161D24;
+      --surface-alt: #1E262E;
+      --line:        #2C363F;
+      --line-soft:   #232C34;
+      --ink:         #E4EAF0;
+      --ink-2:       #B6C2CD;
+      --muted:       #8A9AA8;
+      --accent:      #63B0D8;
+      --accent-soft: #1B3040;
+      --neutral-bar: #5D707F;
+      --good:        #6BC191;
+      --good-soft:   #1B3025;
+      --warn:        #DCA355;
+      --warn-soft:   #33280F;
+      --crit:        #E08585;
+      --crit-soft:   #3A1F1F;
+      --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .7);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #17131a;
-    --surface: #201a21;
-    --surface-alt: #2a222b;
-    --border: #382e37;
-    --grid: #382e37;
-    --ink: #f0e9ec;
-    --ink-muted: #a79aa2;
-    --ink-faint: #6f636b;
-    --accent: #e38aa6;
-    --accent-deep: #f3b0c4;
-    --accent-wash: rgba(227, 138, 166, 0.12);
-    --accent-wash-strong: rgba(227, 138, 166, 0.20);
-    --good: #6fbe86;
-    --good-wash: rgba(111, 190, 134, 0.14);
-    --critical: #e08276;
-    --critical-wash: rgba(224, 130, 118, 0.14);
-  }
-  :root[data-theme="light"] {
-    --bg: #faf7f5;
-    --surface: #ffffff;
-    --surface-alt: #f2ebe8;
-    --border: #e6dcd8;
-    --grid: #e4dcd8;
-    --ink: #241c22;
-    --ink-muted: #8a7e86;
-    --ink-faint: #b3a7ad;
-    --accent: #a24463;
-    --accent-deep: #7a3049;
-    --accent-wash: rgba(162, 68, 99, 0.10);
-    --accent-wash-strong: rgba(162, 68, 99, 0.18);
-    --good: #3f8557;
-    --good-wash: rgba(63, 133, 87, 0.12);
-    --critical: #b5423b;
-    --critical-wash: rgba(181, 66, 59, 0.12);
+    --ground:      #0F1419;
+    --surface:     #161D24;
+    --surface-alt: #1E262E;
+    --line:        #2C363F;
+    --line-soft:   #232C34;
+    --ink:         #E4EAF0;
+    --ink-2:       #B6C2CD;
+    --muted:       #8A9AA8;
+    --accent:      #63B0D8;
+    --accent-soft: #1B3040;
+    --neutral-bar: #5D707F;
+    --good:        #6BC191;
+    --good-soft:   #1B3025;
+    --warn:        #DCA355;
+    --warn-soft:   #33280F;
+    --crit:        #E08585;
+    --crit-soft:   #3A1F1F;
+    --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .7);
   }
 
   * { box-sizing: border-box; }
-  html, body { height: auto; }
   body {
     margin: 0;
-    background: var(--bg);
+    background: var(--ground);
     color: var(--ink);
-    font-family: var(--font-body);
+    font-family: "IBM Plex Sans KR", system-ui, -apple-system, "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  .dashboard {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 28px 24px 60px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 96px; }
 
-  /* ---------- Masthead ---------- */
-  .masthead {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-  }
-  .masthead-title-group { display: flex; flex-direction: column; gap: 6px; }
+  /* ---------- masthead ---------- */
+  .masthead { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
   .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
+    font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 10px;
   }
-  h1.masthead-title {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 28px;
-    letter-spacing: -0.01em;
-    margin: 0;
-    text-wrap: balance;
-    color: var(--ink);
+  h1 {
+    font-family: "Gothic A1", "IBM Plex Sans KR", sans-serif;
+    font-weight: 800; font-size: clamp(28px, 4.2vw, 42px); line-height: 1.15;
+    letter-spacing: -.02em; margin: 0 0 12px; text-wrap: balance;
   }
-  /* ---------- KPI strip ---------- */
-  .kpi-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-  .kpi-tile {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .kpi-label { font-size: 12.5px; color: var(--ink-muted); font-weight: 500; }
-  .kpi-value { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
-  .kpi-delta { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; width: fit-content; padding: 3px 8px 3px 7px; border-radius: var(--radius-chip); }
-  .kpi-delta.up { color: var(--good); background: var(--good-wash); }
-  .kpi-delta.down { color: var(--critical); background: var(--critical-wash); }
-  .kpi-delta .arrow { font-size: 11px; }
-  .kpi-delta .vs { color: var(--ink-faint); font-weight: 400; margin-left: 2px; }
-  .kpi-delta.unavailable { color: var(--ink-faint); background: var(--surface-alt); font-weight: 500; }
-
-  /* ---------- Cards ---------- */
-  .chart-card, .table-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 20px 22px 16px;
-  }
-  .card-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 8px; }
-  .card-title { font-size: 15px; font-weight: 600; color: var(--ink); }
-  .card-sub { font-size: 12.5px; color: var(--ink-muted); }
-  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
-
-  /* ---------- Filter row ---------- */
-  .filter-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-  .filter-label { font-size: 12.5px; color: var(--ink-muted); font-weight: 500; margin-right: 2px; }
-  .step-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 32px;
-    flex: none;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
-    color: var(--ink-muted);
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .step-btn:hover { color: var(--ink); border-color: var(--accent); }
-  .step-btn:disabled { opacity: 0.3; cursor: default; }
-  .step-btn:disabled:hover { color: var(--ink-muted); border-color: var(--border); }
-  .date-pill-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    background: var(--surface-alt);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 3px;
-    overflow-x: auto;
-    max-width: 100%;
-  }
-  .date-pill {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--ink-muted);
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-    padding: 6px 11px;
-    border-radius: 7px;
-    cursor: pointer;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .date-pill:hover { color: var(--ink); background: var(--border); }
-  .date-pill.active { background: var(--accent); color: var(--surface); }
-  .date-pill.active:hover { background: var(--accent); color: var(--surface); }
-  .date-pill .latest-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.8; }
-  .filter-total { margin-left: auto; font-size: 12.5px; color: var(--ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .filter-total strong { color: var(--ink); font-weight: 700; }
-
-  @media (max-width: 760px) {
-    .filter-total { margin-left: 0; width: 100%; order: 3; }
+  .dek { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 16px; }
+  .stamp {
+    margin-top: 18px; font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px; color: var(--muted);
   }
 
-  /* ---------- Trend toolbar (granularity + date range) ---------- */
-  .toolbar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
-  .toolbar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .toolbar-caption { margin: 0; font-size: 12px; color: var(--ink-faint); line-height: 1.5; }
-  .range-sep { color: var(--ink-faint); font-size: 12.5px; }
-  .date-input {
-    font-family: inherit;
-    font-variant-numeric: tabular-nums;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink);
-    background: var(--surface-alt);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 8px;
-    color-scheme: light;
+  /* ---------- sections ---------- */
+  section { margin-top: 52px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  h2 {
+    font-family: "Gothic A1", "IBM Plex Sans KR", sans-serif;
+    font-weight: 700; font-size: 21px; letter-spacing: -.01em; margin: 0;
   }
-  :root[data-theme="dark"] .date-input { color-scheme: dark; }
-  @media (prefers-color-scheme: dark) { .date-input { color-scheme: dark; } }
-  .toolbar-row .filter-total { margin-left: auto; }
+  .sec-note { margin: 0 0 18px; color: var(--muted); font-size: 13.5px; max-width: 74ch; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line-soft);
+    border-radius: var(--r); box-shadow: var(--shadow);
+  }
+  .pad { padding: 20px 22px; }
 
-  svg text { font-family: var(--font-body); fill: var(--ink-muted); }
-  .axis-line { stroke: var(--grid); stroke-width: 1; }
-  .gridline { stroke: var(--grid); stroke-width: 1; }
-  .series-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .series-area { fill: var(--accent-wash); }
-  .series-dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
-  .crosshair-line { stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0; pointer-events: none; }
-  .end-label-value { font-size: 13px; font-weight: 700; fill: var(--accent-deep); }
-  .end-label-sub { font-size: 10.5px; fill: var(--ink-muted); }
-  .hit-col { fill: transparent; }
-  .bar-hit { fill: transparent; cursor: pointer; }
-  .bar-rect { fill: var(--accent); }
-  .bar-rect.hover { fill: var(--accent-deep); }
-  .bar-label-name { font-size: 12px; fill: var(--ink); }
-  .bar-label-value { font-size: 11.5px; font-weight: 700; fill: var(--ink); font-variant-numeric: tabular-nums; }
-
-  .tooltip {
-    position: absolute;
-    pointer-events: none;
-    background: var(--ink);
-    color: var(--bg);
-    border-radius: 8px;
-    padding: 8px 11px;
-    font-size: 12.5px;
-    line-height: 1.5;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
-    transform: translate(-50%, -110%);
-    opacity: 0;
-    transition: opacity 0.08s ease;
-    white-space: nowrap;
-    z-index: 5;
-  }
-  .tooltip.visible { opacity: 1; }
-  .tooltip .tt-value { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .tooltip .tt-label { color: color-mix(in srgb, var(--bg) 70%, transparent); margin-left: 4px; }
-  .chart-wrap { position: relative; }
-
-  /* ---------- Table ---------- */
-  .table-scroll { overflow-x: auto; }
-  table.daily-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.daily-table th, table.daily-table td {
-    padding: 9px 12px;
-    text-align: right;
-    white-space: nowrap;
-  }
-  table.daily-table th:first-child, table.daily-table td:first-child { text-align: left; }
-  table.daily-table thead th {
-    font-weight: 600;
-    color: var(--ink-muted);
-    font-size: 11.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid var(--border);
-  }
-  table.daily-table tbody td { border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; color: var(--ink); }
-  table.daily-table tbody tr:last-child td { border-bottom: none; }
-  table.daily-table tbody tr:hover td { background: var(--surface-alt); }
-  table.daily-table tbody tr.latest td { font-weight: 700; }
-  table.daily-table tbody tr.zero-row td { color: var(--ink-faint); }
-  table.daily-table td.no-name { text-align: left; }
-  .no-sale-pill {
-    display: inline-block;
-    font-size: 10.5px;
-    color: var(--ink-faint);
-    background: var(--surface-alt);
-    border-radius: var(--radius-chip);
-    padding: 1px 8px;
+  /* ---------- numbers ---------- */
+  .num {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums; font-feature-settings: "tnum";
   }
 
-  footer.note { font-size: 12px; color: var(--ink-faint); padding-top: 4px; }
-
-  a, button { font-family: inherit; }
-  [tabindex]:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-
-  @media (max-width: 760px) {
-    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
-    .chart-row { grid-template-columns: 1fr; }
+  /* ---------- badges ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .02em;
+    padding: 2px 8px; border-radius: 999px; white-space: nowrap;
   }
+  .b-good { background: var(--good-soft); color: var(--good); }
+  .b-warn { background: var(--warn-soft); color: var(--warn); }
+  .b-crit { background: var(--crit-soft); color: var(--crit); }
+  .b-mute { background: var(--surface-alt); color: var(--muted); }
+  .b-acc  { background: var(--accent-soft); color: var(--accent); }
+</style>
+<style>
+  /* ---------- window comparison (thesis) ---------- */
+  .cmp { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .cmp th, .cmp td { padding: 11px 14px; text-align: right; border-bottom: 1px solid var(--line-soft); }
+  .cmp th:first-child, .cmp td:first-child { text-align: left; color: var(--ink-2); }
+  .cmp thead th {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    border-bottom: 1px solid var(--line); vertical-align: bottom;
+  }
+  .cmp thead th .wlabel { display: block; color: var(--ink); font-size: 13.5px; margin-bottom: 4px; }
+  .cmp tbody tr:last-child td { border-bottom: none; }
+  .cmp tr.pivot td { background: var(--accent-soft); font-weight: 600; }
+  .cmp tr.pivot td:first-child { color: var(--accent); }
+  .delta { display: block; font-size: 11.5px; color: var(--muted); font-weight: 400; }
+
+  /* ---------- kpi ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 1px;
+          background: var(--line-soft); border-radius: var(--r); overflow: hidden;
+          border: 1px solid var(--line-soft); }
+  .kpi { background: var(--surface); padding: 16px 18px; }
+  .kpi .k { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .kpi .v { font-size: 24px; font-weight: 600; letter-spacing: -.01em; margin-top: 3px; }
+  .kpi .s { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- charts row ---------- */
+  .row2 { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 900px) { .row2 { grid-template-columns: 1.1fr .9fr; } }
+  .chart-h { font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 2px; }
+  .chart-s { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .g-line { stroke: var(--line-soft); }
+  .g-txt  { fill: var(--muted); font-size: 10.5px; font-family: "IBM Plex Mono", monospace; }
+  .g-name { fill: var(--ink-2); font-size: 11.5px; }
+  .g-val  { fill: var(--ink); font-size: 11px; font-family: "IBM Plex Mono", monospace;
+            font-weight: 500; }
+
+  /* ---------- lineup table ---------- */
+  .scroll { overflow-x: auto; }
+  .lt { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 720px; }
+  .lt th, .lt td { padding: 9px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+  .lt thead th { font-size: 11.5px; color: var(--muted); font-weight: 600;
+                 border-bottom: 1px solid var(--line); }
+  .lt td.n { text-align: right; }
+  .lt tbody tr:hover { background: var(--surface-alt); }
+  .pname { font-weight: 500; }
+  .pno { color: var(--muted); font-size: 12px; }
+
+  /* ---------- actions ---------- */
+  .acts { display: flex; flex-direction: column; gap: 12px; }
+  .act { border: 1px solid var(--line-soft); border-left: 3px solid var(--muted);
+         border-radius: 8px; background: var(--surface); padding: 14px 16px; }
+  .act.p1 { border-left-color: var(--crit); }
+  .act.p2 { border-left-color: var(--warn); }
+  .act.p3 { border-left-color: var(--muted); }
+  .act.hold { background: var(--surface-alt); opacity: .82; }
+  .act-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .act-title { font-weight: 600; }
+  .act-target { color: var(--ink-2); font-size: 13.5px; margin-top: 4px; }
+  .act-ev { margin: 8px 0 0; padding: 0; list-style: none; display: flex;
+            flex-direction: column; gap: 3px; }
+  .act-ev li { font-size: 12.5px; color: var(--muted); }
+  .act-ev .wl { color: var(--ink-2); font-weight: 500; }
+  .owner { margin-left: auto; font-size: 11.5px; color: var(--muted); }
+
+  /* ---------- warning banner ---------- */
+  .warn-banner { border: 1px solid var(--warn); background: var(--warn-soft);
+                 color: var(--warn); border-radius: var(--r); padding: 14px 18px;
+                 font-size: 13.5px; margin-top: 24px; }
+  .warn-banner strong { color: var(--warn); }
+
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+           color: var(--muted); font-size: 12.5px; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+<style>
+  h3 { font-family: "Gothic A1", "IBM Plex Sans KR", sans-serif; font-weight: 700;
+       font-size: 14px; margin: 28px 0 12px; color: var(--ink-2); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px;
+            color: var(--muted); margin: 0 0 12px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+              margin-right: 5px; vertical-align: -1px; }
 </style>
 
-<div class="dashboard">
+<div class="wrap">
   <header class="masthead">
-    <div class="masthead-title-group">
-      <span class="eyebrow">Verish 자사몰 · 상품 라인 성과</span>
-      <h1 class="masthead-title">첫 구매 전용 퍼포먼스</h1>
-    </div>
+    <p class="eyebrow">Verish 자사몰 · 구매회차 1회</p>
+    <h1>첫구매 고객은 전용 상품을 쓰고 있는가</h1>
+    <p class="dek">
+      기존 지표는 <strong>[첫 구매 전용] 상품이 얼마 팔렸나</strong>만 봤다. 고객의 구매회차와는 무관한 숫자였다.
+      이 화면은 반대쪽을 본다 — 주문의 <span class="num">first_order</span> 가 <span class="num">T</span> 인
+      고객(그 회원의 첫 주문)이 실제로 무엇을 담았는지, 그래서 전용 라인업에 어떤 빈칸이 있는지.
+    </p>
+    <p class="stamp" id="stamp"></p>
   </header>
 
+  <div id="banner"></div>
+
   <section>
-    <div class="toolbar-row" style="margin-bottom: 10px;">
-      <span class="filter-label">대비 기준</span>
-      <div class="date-pill-group" id="kpiBasisGroup" role="tablist" aria-label="비교 기준"></div>
+    <div class="sec-head">
+      <h2>창 비교 — 같은 라인업이 기간에 따라 정반대로 읽힌다</h2>
     </div>
-    <div class="kpi-strip" id="kpiStrip"></div>
+    <p class="sec-note">
+      행사(클리어런스) 기간에는 <span class="num">[N+M]</span> 번들이 첫구매를 점령해 전용 상품이 구조적으로
+      죽은 것처럼 보인다. 그래서 라인업 판단의 기준은 <strong>평상시 창</strong>이고, 행사 창은 대조용이다.
+    </p>
+    <div class="card scroll"><table class="cmp" id="cmpTable"></table></div>
   </section>
 
-  <section class="chart-card">
-    <div class="toolbar">
-      <div class="toolbar-row">
-        <span class="filter-label">보기 단위</span>
-        <div class="date-pill-group" id="granPillGroup" role="tablist" aria-label="집계 단위"></div>
+  <section>
+    <div class="sec-head">
+      <h2>평상시 창 요약</h2>
+      <span class="badge b-mute" id="kpiWindow"></span>
+    </div>
+    <p class="sec-note">
+      커버리지 = 전용 상품을 담은 첫구매 주문 / 전체 첫구매 주문. 객단가는 주문 전체 결제금액 평균이다.
+    </p>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>첫구매 상품 랭킹과 라인업 빈칸</h2></div>
+    <p class="sec-note">
+      사은품(<span class="num">gift=T</span>, 전체 품목의 16%)은 제외했다. 안 빼면 사은품 암슬리브가
+      침투율 54%로 1위가 되어 "사은품을 전용 상품으로 만들자"는 결론이 나온다.
+    </p>
+    <div class="legend">
+      <span><i style="background: var(--accent)"></i>전용 상품</span>
+      <span><i style="background: var(--good)"></i>일반 — 전용 쌍둥이 있음</span>
+      <span><i style="background: var(--neutral-bar)"></i>일반 — 전용 없음(후보군)</span>
+    </div>
+    <div class="row2">
+      <div class="card pad">
+        <p class="chart-h">첫구매 주문수 상위 상품</p>
+        <p class="chart-s">막대 길이 = 그 상품을 담은 첫구매 주문수</p>
+        <div id="rankChart"></div>
       </div>
-      <p class="toolbar-caption">매출·주문건수는 선택 구간 합계 · 객단가·매출비중은 구간 합계 기준 재계산값 · 스프레드시트 시트1 일별 데이터 기준</p>
-      <div class="toolbar-row">
-        <span class="filter-label">관측 기간</span>
-        <input type="date" class="date-input" id="rangeStart" aria-label="시작일">
-        <span class="range-sep">~</span>
-        <input type="date" class="date-input" id="rangeEnd" aria-label="종료일">
-        <div class="date-pill-group" id="rangePresetGroup" role="tablist" aria-label="기간 프리셋"></div>
-        <span class="filter-total" id="rangeTotal"></span>
+      <div class="card pad">
+        <p class="chart-h">갭 매트릭스</p>
+        <p class="chart-s">가로 침투율 · 세로 첫구매지수 · 점 크기 매출. 우상단의 회색 점이 전용 후보다</p>
+        <div id="gapChart"></div>
       </div>
     </div>
   </section>
 
-  <section class="chart-row">
-    <div class="chart-card">
-      <div class="card-head">
-        <span class="card-title">합계 매출 추이</span>
-      </div>
-      <div class="chart-wrap" id="revenueChartWrap"></div>
-    </div>
-    <div class="chart-card">
-      <div class="card-head">
-        <span class="card-title">주문건수 추이</span>
-      </div>
-      <div class="chart-wrap" id="ordersChartWrap"></div>
+  <section>
+    <div class="sec-head"><h2>전용 라인업 판정</h2></div>
+    <p class="sec-note">
+      흡수율 = 전용 첫구매주문 / (전용 + 짝 일반상품 첫구매주문). 전용이 0건이어도 짝 일반상품이 잘 팔리면
+      그건 수요 없음이 아니라 <strong>전용으로 오지 않음</strong>이다 — 진열 제외가 아니라 노출·가격 문제다.
+    </p>
+    <div class="card scroll"><table class="lt" id="lineupTable"></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>액션</h2></div>
+    <p class="sec-note">
+      모든 창에서 동일하게 나타난 신호만 실행 대상으로 본다. 한 창에만 나온 것은 보류로 내려 두었다.
+    </p>
+    <div class="acts" id="actsConfirmed"></div>
+    <h3>보류 — 한 창에만 나타남</h3>
+    <div class="acts" id="actsHold"></div>
+  </section>
+
+  <section id="secLegacy">
+    <div class="sec-head"><h2>전용 상품 일별 매출 · 기존 지표</h2></div>
+    <p class="sec-note">
+      기존 루틴이 매일 적재해 온 공급 측 지표. 정의가 달라 위 숫자와 직접 비교되지 않는다 —
+      여기 매출은 라인아이템 기준, 객단가는 그 상품이 포함된 주문의 전체 결제금액 평균이다.
+    </p>
+    <div class="card pad">
+      <p class="chart-h">[첫 구매 전용] 전체 일별 매출</p>
+      <p class="chart-s" id="legacyRange"></p>
+      <div id="legacyChart"></div>
     </div>
   </section>
 
-  <section class="chart-card">
-    <div class="card-head">
-      <span class="card-title">상품별 상세 (날짜 필터)</span>
-      <span class="card-sub">21개 추적 상품 전체 · 0건 판매 상품 포함</span>
-    </div>
-    <div class="filter-row">
-      <span class="filter-label">날짜</span>
-      <button type="button" class="step-btn" id="datePrev" aria-label="이전 날짜">‹</button>
-      <div class="date-pill-group" id="datePillGroup" role="tablist" aria-label="날짜 선택"></div>
-      <button type="button" class="step-btn" id="dateNext" aria-label="다음 날짜">›</button>
-      <span class="filter-total" id="filterTotal"></span>
-    </div>
-    <div class="chart-wrap" id="rankChartWrap"></div>
-    <div class="table-scroll" style="margin-top: 18px;">
-      <table class="daily-table" id="productTable">
-        <thead>
-          <tr>
-            <th class="no-name">상품명</th>
-            <th>매출</th>
-            <th>주문건수</th>
-            <th>객단가</th>
-            <th>일 매출 대비 비중</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="table-card">
-    <div class="card-head">
-      <span class="card-title">일별 합계 데이터</span>
-      <span class="card-sub">스프레드시트 시트1 기준</span>
-    </div>
-    <div class="table-scroll">
-      <table class="daily-table" id="dailyTable">
-        <thead>
-          <tr>
-            <th>날짜</th>
-            <th>매출</th>
-            <th>주문건수</th>
-            <th>객단가</th>
-            <th>일 매출 대비 비중</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer class="note">매일 11시 자동 스케줄로 집계되는 Cafe24 데이터를 기반으로 자동 생성됩니다 · 데이터 출처: 자사몰 [첫 구매 전용] 상품 매출 현황 시트</footer>
+  <footer id="foot"></footer>
 </div>
-
 <script>
 (function () {
   "use strict";
+  /* DATA_START */
+  var DATA = {"generated_at":"2026-08-20T13:22:57.688Z","windows":[{"file":"first_order_mix_2026-07-22_2026-07-28.json","label":"2026-07-22 ~ 2026-07-28","days":7,"promo":false,"summary":{"valid_orders":9288,"valid_orders_order_level":9301,"gift_items_skipped":186,"first_orders":3774,"repeat_orders":5514,"first_share_pct":40.6,"first_revenue_order":206096660,"first_aov":54610,"repeat_aov":65224,"guest_orders":800,"guest_first_true":0,"guest_first_false":800,"exclusive_coverage_pct":33,"fo_with_excl":1247,"fo_without_excl":2527,"aov_fo_with_excl":37128,"aov_fo_without_excl":63236,"aov_ratio":0.587,"exclusive_orders":1410,"exclusive_first_pct":88.4,"exclusive_repeat_pct":11.6,"bundle_fo_share_pct":2.9,"lineup_size":19,"lineup_zero_sale":5},"warnings":[],"products":[{"product_no":748,"product_name":"[첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","is_exclusive":true,"pair_status":"전용","base_key":"쿨핏브라오프숄더볼륨","fo_orders":467,"rp_orders":51,"fo_qty":467,"fo_revenue":8271227,"fo_penetration_pct":12.4,"rp_penetration_pct":0.9,"first_index":2,"index_note":null,"bundle_type":null,"score":1,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":668,"product_name":"쿨핏 브라 오프숄더 볼륨","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏브라오프숄더볼륨","fo_orders":384,"rp_orders":541,"fo_qty":424,"fo_revenue":12734755,"fo_penetration_pct":10.2,"rp_penetration_pct":9.8,"first_index":1.037,"index_note":null,"bundle_type":null,"score":0.692,"score_note":"재구매미반영","tags":["전용중복"]},{"product_no":119,"product_name":"쿨핏 브라 오프숄더","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏브라오프숄더","fo_orders":323,"rp_orders":310,"fo_qty":387,"fo_revenue":10501515,"fo_penetration_pct":8.6,"rp_penetration_pct":5.6,"first_index":1.522,"index_note":null,"bundle_type":null,"score":0.722,"score_note":"재구매미반영","tags":["전용후보"]},{"product_no":871,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏","is_exclusive":true,"pair_status":"전용","base_key":"쿨핏브라볼륨핏","fo_orders":195,"rp_orders":31,"fo_qty":195,"fo_revenue":5790708,"fo_penetration_pct":5.2,"rp_penetration_pct":0.6,"first_index":2,"index_note":null,"bundle_type":null,"score":0.668,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":83,"product_name":"쿨핏 브라 볼륨핏","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏브라볼륨핏","fo_orders":177,"rp_orders":408,"fo_qty":277,"fo_revenue":10267066,"fo_penetration_pct":4.7,"rp_penetration_pct":7.4,"first_index":0.634,"index_note":null,"bundle_type":null,"score":0.352,"score_note":"재구매미반영","tags":["재구매형","전용중복"]},{"product_no":32,"product_name":"쿨핏 브라 시그니처","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏브라시그니처","fo_orders":165,"rp_orders":287,"fo_qty":240,"fo_revenue":7422214,"fo_penetration_pct":4.4,"rp_penetration_pct":5.2,"first_index":0.84,"index_note":null,"bundle_type":null,"score":0.383,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1272,"product_name":"푸시업 누드브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"푸시업누드브라","fo_orders":142,"rp_orders":179,"fo_qty":152,"fo_revenue":4661723,"fo_penetration_pct":3.8,"rp_penetration_pct":3.2,"first_index":1.159,"index_note":null,"bundle_type":null,"score":0.423,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1340,"product_name":"[첫 구매 전용] 아이스온 오프숄더 브라","is_exclusive":true,"pair_status":"전용","base_key":"아이스온오프숄더브라","fo_orders":142,"rp_orders":12,"fo_qty":142,"fo_revenue":2541942,"fo_penetration_pct":3.8,"rp_penetration_pct":0.2,"first_index":2,"index_note":null,"bundle_type":null,"score":0.604,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1184,"product_name":"아이스온 오프숄더 브라","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"아이스온오프숄더브라","fo_orders":113,"rp_orders":144,"fo_qty":128,"fo_revenue":3624743,"fo_penetration_pct":3,"rp_penetration_pct":2.6,"first_index":1.147,"index_note":null,"bundle_type":null,"score":0.384,"score_note":"재구매미반영","tags":["전용중복"]},{"product_no":28,"product_name":"쿨핏 팬티","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏팬티","fo_orders":110,"rp_orders":169,"fo_qty":195,"fo_revenue":2722349,"fo_penetration_pct":2.9,"rp_penetration_pct":3.1,"first_index":0.951,"index_note":null,"bundle_type":null,"score":0.337,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":669,"product_name":"쿨핏 브라 오프숄더 4WAY 스트랩","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏브라오프숄더4WAY스트랩","fo_orders":99,"rp_orders":152,"fo_qty":110,"fo_revenue":2048367,"fo_penetration_pct":2.6,"rp_penetration_pct":2.8,"first_index":0.952,"index_note":null,"bundle_type":null,"score":0.324,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":194,"product_name":"쿨핏 브라 볼륨핏 PLUS","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏브라볼륨핏PLUS","fo_orders":95,"rp_orders":258,"fo_qty":125,"fo_revenue":4876120,"fo_penetration_pct":2.5,"rp_penetration_pct":4.7,"first_index":0.538,"index_note":null,"bundle_type":null,"score":0.23,"score_note":"재구매미반영","tags":["재구매형","전용중복"]},{"product_no":1314,"product_name":"모달 브라탑 3종 set","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"모달브라탑3종set","fo_orders":95,"rp_orders":186,"fo_qty":97,"fo_revenue":4795092,"fo_penetration_pct":2.5,"rp_penetration_pct":3.4,"first_index":0.746,"index_note":null,"bundle_type":"C","score":0.275,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":1242,"product_name":"[첫 구매 전용] 아이스온 푸시업 브라","is_exclusive":true,"pair_status":"전용","base_key":"아이스온푸시업브라","fo_orders":94,"rp_orders":10,"fo_qty":94,"fo_revenue":1924641,"fo_penetration_pct":2.5,"rp_penetration_pct":0.2,"first_index":2,"index_note":null,"bundle_type":null,"score":0.544,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":85,"product_name":"쿨핏 브라 볼륨핏&팬티 set","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏브라볼륨핏&팬티set","fo_orders":92,"rp_orders":153,"fo_qty":137,"fo_revenue":6776512,"fo_penetration_pct":2.4,"rp_penetration_pct":2.8,"first_index":0.879,"index_note":null,"bundle_type":"C","score":0.299,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":880,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏 PLUS","is_exclusive":true,"pair_status":"전용","base_key":"쿨핏브라볼륨핏PLUS","fo_orders":73,"rp_orders":16,"fo_qty":73,"fo_revenue":2247136,"fo_penetration_pct":1.9,"rp_penetration_pct":0.3,"first_index":2,"index_note":null,"bundle_type":null,"score":0.516,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1209,"product_name":"모달 브라탑 스타터팩","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"모달브라탑스타터팩","fo_orders":71,"rp_orders":127,"fo_qty":76,"fo_revenue":3068752,"fo_penetration_pct":1.9,"rp_penetration_pct":2.3,"first_index":0.817,"index_note":null,"bundle_type":"C","score":0.263,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":71,"product_name":"쿨핏 브라 시그니처&팬티 set","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"쿨핏브라시그니처&팬티set","fo_orders":70,"rp_orders":145,"fo_qty":97,"fo_revenue":3996200,"fo_penetration_pct":1.9,"rp_penetration_pct":2.6,"first_index":0.705,"index_note":null,"bundle_type":"C","score":0.239,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":84,"product_name":"쿨핏 팬티 볼륨핏","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏팬티볼륨핏","fo_orders":68,"rp_orders":132,"fo_qty":91,"fo_revenue":1465962,"fo_penetration_pct":1.8,"rp_penetration_pct":2.4,"first_index":0.753,"index_note":null,"bundle_type":null,"score":0.244,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":1342,"product_name":"[첫 구매 전용] 에센셜핏 백리스 브라렛","is_exclusive":true,"pair_status":"전용","base_key":"에센셜핏백리스브라렛","fo_orders":55,"rp_orders":8,"fo_qty":55,"fo_revenue":1084687,"fo_penetration_pct":1.5,"rp_penetration_pct":0.1,"first_index":2,"index_note":null,"bundle_type":null,"score":0.498,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1337,"product_name":"[첫 구매 전용] 모달 브라탑","is_exclusive":true,"pair_status":"전용","base_key":"모달브라탑","fo_orders":55,"rp_orders":4,"fo_qty":55,"fo_revenue":932898,"fo_penetration_pct":1.5,"rp_penetration_pct":0.1,"first_index":null,"index_note":"재구매표본부족","bundle_type":null,"score":0.283,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1270,"product_name":"트라이앵글 니플패치","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"트라이앵글니플패치","fo_orders":54,"rp_orders":106,"fo_qty":67,"fo_revenue":1132515,"fo_penetration_pct":1.4,"rp_penetration_pct":1.9,"first_index":0.744,"index_note":null,"bundle_type":null,"score":0.224,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":881,"product_name":"[첫 구매 전용] 쿨핏 브라 컴포트 BIG","is_exclusive":true,"pair_status":"전용","base_key":"쿨핏브라컴포트BIG","fo_orders":53,"rp_orders":8,"fo_qty":53,"fo_revenue":1629727,"fo_penetration_pct":1.4,"rp_penetration_pct":0.1,"first_index":2,"index_note":null,"bundle_type":null,"score":0.493,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":162,"product_name":"착착 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"착착브라","fo_orders":53,"rp_orders":47,"fo_qty":76,"fo_revenue":493913,"fo_penetration_pct":1.4,"rp_penetration_pct":0.9,"first_index":1.648,"index_note":null,"bundle_type":null,"score":0.418,"score_note":"재구매미반영","tags":["전용후보"]},{"product_no":1310,"product_name":"에센셜핏 브라렛 스타터팩","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"에센셜핏브라렛스타터팩","fo_orders":50,"rp_orders":116,"fo_qty":51,"fo_revenue":3402318,"fo_penetration_pct":1.3,"rp_penetration_pct":2.1,"first_index":0.63,"index_note":null,"bundle_type":"C","score":0.195,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":1339,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","is_exclusive":true,"pair_status":"전용","base_key":"아이스온에어리브라","fo_orders":49,"rp_orders":6,"fo_qty":49,"fo_revenue":982945,"fo_penetration_pct":1.3,"rp_penetration_pct":0.1,"first_index":2,"index_note":null,"bundle_type":null,"score":0.488,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1257,"product_name":"[3+2] 아이스온 푸시업 브라&브리프 팬티 set","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+2]아이스온푸시업브라&브리프팬티set","fo_orders":48,"rp_orders":82,"fo_qty":49,"fo_revenue":6255718,"fo_penetration_pct":1.3,"rp_penetration_pct":1.5,"first_index":0.855,"index_note":null,"bundle_type":"C","score":0.243,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1302,"product_name":"에센셜핏 백리스 브라렛","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"에센셜핏백리스브라렛","fo_orders":47,"rp_orders":134,"fo_qty":55,"fo_revenue":1641949,"fo_penetration_pct":1.2,"rp_penetration_pct":2.4,"first_index":0.512,"index_note":null,"bundle_type":null,"score":0.165,"score_note":"재구매미반영","tags":["재구매형","전용중복"]},{"product_no":1271,"product_name":"데미 와이어 누드브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"데미와이어누드브라","fo_orders":47,"rp_orders":89,"fo_qty":48,"fo_revenue":1438221,"fo_penetration_pct":1.2,"rp_penetration_pct":1.6,"first_index":0.772,"index_note":null,"bundle_type":null,"score":0.221,"score_note":"재구매미반영","tags":["재구매형"]},{"product_no":1285,"product_name":"아이스온 브리프 팬티 7PACK","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"아이스온브리프팬티7PACK","fo_orders":46,"rp_orders":119,"fo_qty":48,"fo_revenue":1983225,"fo_penetration_pct":1.2,"rp_penetration_pct":2.2,"first_index":0.565,"index_note":null,"bundle_type":"C","score":0.176,"score_note":"재구매미반영","tags":["재구매형"]}],"lineup":[{"product_no":748,"product_name":"[첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","fo_orders":467,"rp_orders":51,"fo_qty":467,"fo_revenue":8271227,"fo_penetration_pct":12.4,"pair_products":[668],"pair_fo_orders":384,"absorption_pct":54.9,"verdict":"주력"},{"product_no":871,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏","fo_orders":195,"rp_orders":31,"fo_qty":195,"fo_revenue":5790708,"fo_penetration_pct":5.2,"pair_products":[1211,988,987,83],"pair_fo_orders":177,"absorption_pct":52.4,"verdict":"주력"},{"product_no":1340,"product_name":"[첫 구매 전용] 아이스온 오프숄더 브라","fo_orders":142,"rp_orders":12,"fo_qty":142,"fo_revenue":2541942,"fo_penetration_pct":3.8,"pair_products":[1491,1490,1185,1184],"pair_fo_orders":113,"absorption_pct":55.7,"verdict":"주력"},{"product_no":1242,"product_name":"[첫 구매 전용] 아이스온 푸시업 브라","fo_orders":94,"rp_orders":10,"fo_qty":94,"fo_revenue":1924641,"fo_penetration_pct":2.5,"pair_products":[1241,1240,1239,1179,1178],"pair_fo_orders":22,"absorption_pct":81,"verdict":"주력"},{"product_no":880,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏 PLUS","fo_orders":73,"rp_orders":16,"fo_qty":73,"fo_revenue":2247136,"fo_penetration_pct":1.9,"pair_products":[1212,935,933,932,194],"pair_fo_orders":95,"absorption_pct":43.5,"verdict":"관찰"},{"product_no":1342,"product_name":"[첫 구매 전용] 에센셜핏 백리스 브라렛","fo_orders":55,"rp_orders":8,"fo_qty":55,"fo_revenue":1084687,"fo_penetration_pct":1.5,"pair_products":[1302],"pair_fo_orders":47,"absorption_pct":53.9,"verdict":"주력"},{"product_no":1337,"product_name":"[첫 구매 전용] 모달 브라탑","fo_orders":55,"rp_orders":4,"fo_qty":55,"fo_revenue":932898,"fo_penetration_pct":1.5,"pair_products":[1208,1207,1107],"pair_fo_orders":35,"absorption_pct":61.1,"verdict":"주력"},{"product_no":881,"product_name":"[첫 구매 전용] 쿨핏 브라 컴포트 BIG","fo_orders":53,"rp_orders":8,"fo_qty":53,"fo_revenue":1629727,"fo_penetration_pct":1.4,"pair_products":[1221,1005,1004,285],"pair_fo_orders":44,"absorption_pct":54.6,"verdict":"주력"},{"product_no":1339,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","fo_orders":49,"rp_orders":6,"fo_qty":49,"fo_revenue":982945,"fo_penetration_pct":1.3,"pair_products":[1236,1235,1234,1177,1176],"pair_fo_orders":18,"absorption_pct":73.1,"verdict":"주력"},{"product_no":1338,"product_name":"[첫 구매 전용] 모달 U넥 브라탑","fo_orders":44,"rp_orders":9,"fo_qty":44,"fo_revenue":733685,"fo_penetration_pct":1.2,"pair_products":[1108],"pair_fo_orders":28,"absorption_pct":61.1,"verdict":"주력"},{"product_no":1343,"product_name":"[첫 구매 전용] 에센셜핏 스쿱 브라렛","fo_orders":35,"rp_orders":6,"fo_qty":35,"fo_revenue":675993,"fo_penetration_pct":0.9,"pair_products":[1351,1350,1303],"pair_fo_orders":26,"absorption_pct":57.4,"verdict":"주력"},{"product_no":1341,"product_name":"[첫 구매 전용] 에센셜핏 홀터 브라렛","fo_orders":9,"rp_orders":3,"fo_qty":9,"fo_revenue":180887,"fo_penetration_pct":0.2,"pair_products":[1301],"pair_fo_orders":18,"absorption_pct":33.3,"verdict":"관찰"},{"product_no":1268,"product_name":"[첫 구매 전용] 코튼 립 스퀘어넥 브라탑","fo_orders":6,"rp_orders":2,"fo_qty":6,"fo_revenue":167268,"fo_penetration_pct":0.2,"pair_products":[1100],"pair_fo_orders":6,"absorption_pct":50,"verdict":"주력"},{"product_no":1035,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨 리프트업","fo_orders":4,"rp_orders":1,"fo_qty":4,"fo_revenue":128578,"fo_penetration_pct":0.1,"pair_products":[1010,1009,391],"pair_fo_orders":3,"absorption_pct":57.1,"verdict":"주력"},{"product_no":1237,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1236,1235,1234,1177,1176],"pair_fo_orders":18,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":963,"product_name":"[첫 구매 전용] 웜터치 브라탑 롱슬리브","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[966,896,187],"pair_fo_orders":0,"absorption_pct":null,"verdict":"정리후보(창내 0판매)"},{"product_no":875,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[71],"pair_fo_orders":70,"absorption_pct":0,"verdict":"노출부족"},{"product_no":874,"product_name":"[첫 구매 전용] 쿨핏 팬티","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1216,1053,994,993,28],"pair_fo_orders":110,"absorption_pct":0,"verdict":"노출부족"},{"product_no":873,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1214,926,925,32],"pair_fo_orders":165,"absorption_pct":0,"verdict":"노출부족"}],"actions":[{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"119 쿨핏 브라 오프숄더","evidence":"첫구매 323건 / 침투율 8.6% / 첫구매지수 1.522 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-07-22~2026-07-28"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"162 착착 브라","evidence":"첫구매 53건 / 침투율 1.4% / 첫구매지수 1.648 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-07-22~2026-07-28"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"875 [첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","evidence":"흡수율 0% (전용 0건 vs 짝 일반 70건) — 수요는 있는데 전용으로 안 온다","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-07-22~2026-07-28"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"874 [첫 구매 전용] 쿨핏 팬티","evidence":"흡수율 0% (전용 0건 vs 짝 일반 110건) — 수요는 있는데 전용으로 안 온다","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-07-22~2026-07-28"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"873 [첫 구매 전용] 쿨핏 브라 시그니처","evidence":"흡수율 0% (전용 0건 vs 짝 일반 165건) — 수요는 있는데 전용으로 안 온다","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-07-22~2026-07-28"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1237 [첫 구매 전용] 아이스온 에어리 브라","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 18건). 14일 연속 여부는 일별 적재 후 확정","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-07-22~2026-07-28"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"963 [첫 구매 전용] 웜터치 브라탑 롱슬리브","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 0건). 14일 연속 여부는 일별 적재 후 확정","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-07-22~2026-07-28"},{"rule":"R5","priority":"P2","type":"전용 상품 구성 보강","target":"(전체)","evidence":"전용포함 첫구매 AOV 37128원 vs 미포함 63236원 (비율 0.587) — 전용이 객단가를 낮춘다","action":"세트·N+1·사은품 구성을 추가해 객단가를 보전","owner":"MD","window":"2026-07-22~2026-07-28"}]},{"file":"first_order_mix_2026-08-19_2026-08-19.json","label":"2026-08-19","days":1,"promo":true,"summary":{"valid_orders":9976,"valid_orders_order_level":9990,"gift_items_skipped":4868,"first_orders":4268,"repeat_orders":5708,"first_share_pct":42.8,"first_revenue_order":231602715,"first_aov":54265,"repeat_aov":53889,"guest_orders":752,"guest_first_true":0,"guest_first_false":752,"exclusive_coverage_pct":7.4,"fo_with_excl":316,"fo_without_excl":3952,"aov_fo_with_excl":54321,"aov_fo_without_excl":54260,"aov_ratio":1.001,"exclusive_orders":349,"exclusive_first_pct":90.5,"exclusive_repeat_pct":9.5,"bundle_fo_share_pct":54.4,"lineup_size":19,"lineup_zero_sale":13},"warnings":["행사기간 창 — 첫구매 주문의 54.4% 가 [N+M] 번들을 담았다. 전용 커버리지·0판매 판정이 번들 잠식으로 눌린다. 평상시 창과 교차 확인할 것"],"products":[{"product_no":1493,"product_name":"[3+1] 아이스온 브리프 팬티","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온브리프팬티","fo_orders":1019,"rp_orders":1143,"fo_qty":1180,"fo_revenue":16265134,"fo_penetration_pct":23.9,"rp_penetration_pct":20,"first_index":1.192,"index_note":null,"bundle_type":"C","score":0.827,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1184,"product_name":"아이스온 오프숄더 브라","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"아이스온오프숄더브라","fo_orders":551,"rp_orders":592,"fo_qty":624,"fo_revenue":7648649,"fo_penetration_pct":12.9,"rp_penetration_pct":10.4,"first_index":1.245,"index_note":null,"bundle_type":null,"score":0.575,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":780,"product_name":"티셔츠 브라 커버업","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"티셔츠브라커버업","fo_orders":392,"rp_orders":535,"fo_qty":590,"fo_revenue":9763625,"fo_penetration_pct":9.2,"rp_penetration_pct":9.4,"first_index":0.98,"index_note":null,"bundle_type":null,"score":0.43,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1497,"product_name":"[3+1] 아이스온 노라인 팬티","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온노라인팬티","fo_orders":367,"rp_orders":487,"fo_qty":395,"fo_revenue":7607383,"fo_penetration_pct":8.6,"rp_penetration_pct":8.5,"first_index":1.008,"index_note":null,"bundle_type":"C","score":0.422,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1178,"product_name":"아이스온 푸시업 브라","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"아이스온푸시업브라","fo_orders":324,"rp_orders":374,"fo_qty":375,"fo_revenue":4640396,"fo_penetration_pct":7.6,"rp_penetration_pct":6.6,"first_index":1.159,"index_note":null,"bundle_type":null,"score":0.43,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1186,"product_name":"아이스온 브리프 팬티","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"아이스온브리프팬티","fo_orders":245,"rp_orders":331,"fo_qty":485,"fo_revenue":2241723,"fo_penetration_pct":5.7,"rp_penetration_pct":5.8,"first_index":0.99,"index_note":null,"bundle_type":null,"score":0.348,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":738,"product_name":"[3+1] [25 VER.] 모달 브라탑 크롭","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1][25VER.]모달브라탑크롭","fo_orders":241,"rp_orders":321,"fo_qty":246,"fo_revenue":6903573,"fo_penetration_pct":5.6,"rp_penetration_pct":5.6,"first_index":1.004,"index_note":null,"bundle_type":"C","score":0.349,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1487,"product_name":"[3+1] 아이스온 푸시업 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온푸시업브라","fo_orders":239,"rp_orders":272,"fo_qty":244,"fo_revenue":8881206,"fo_penetration_pct":5.6,"rp_penetration_pct":4.8,"first_index":1.175,"index_note":null,"bundle_type":"C","score":0.386,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":681,"product_name":"[25 VER.] 아이스온 브라 메쉬 컴포트 BIG","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[25VER.]아이스온브라메쉬컴포트BIG","fo_orders":226,"rp_orders":241,"fo_qty":332,"fo_revenue":4022919,"fo_penetration_pct":5.3,"rp_penetration_pct":4.2,"first_index":1.254,"index_note":null,"bundle_type":null,"score":0.395,"score_note":"재구매미반영","tags":["전용후보"]},{"product_no":1488,"product_name":"[3+1] 아이스온 노후크 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온노후크브라","fo_orders":213,"rp_orders":254,"fo_qty":220,"fo_revenue":7892635,"fo_penetration_pct":5,"rp_penetration_pct":4.4,"first_index":1.122,"index_note":null,"bundle_type":"C","score":0.36,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1482,"product_name":"[3+1] [25 VER.] 아이스온 브라 메쉬 컴포트 BIG","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1][25VER.]아이스온브라메쉬컴포트BIG","fo_orders":191,"rp_orders":212,"fo_qty":201,"fo_revenue":7204428,"fo_penetration_pct":4.5,"rp_penetration_pct":3.7,"first_index":1.205,"index_note":null,"bundle_type":"C","score":0.366,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":258,"product_name":"[25 VER.] 아이스온 브라 브리즈","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[25VER.]아이스온브라브리즈","fo_orders":189,"rp_orders":231,"fo_qty":232,"fo_revenue":2636299,"fo_penetration_pct":4.4,"rp_penetration_pct":4,"first_index":1.094,"index_note":null,"bundle_type":null,"score":0.34,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1486,"product_name":"[3+1] 아이스온 에어리 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온에어리브라","fo_orders":167,"rp_orders":188,"fo_qty":167,"fo_revenue":6064937,"fo_penetration_pct":3.9,"rp_penetration_pct":3.3,"first_index":1.188,"index_note":null,"bundle_type":"C","score":0.348,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":319,"product_name":"코튼 팬티 노라인","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"코튼팬티노라인","fo_orders":167,"rp_orders":222,"fo_qty":389,"fo_revenue":2850519,"fo_penetration_pct":3.9,"rp_penetration_pct":3.9,"first_index":1.006,"index_note":null,"bundle_type":null,"score":0.309,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1492,"product_name":"[3+1] 아이스온 오프숄더 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온오프숄더브라","fo_orders":158,"rp_orders":145,"fo_qty":158,"fo_revenue":5705319,"fo_penetration_pct":3.7,"rp_penetration_pct":2.5,"first_index":1.457,"index_note":null,"bundle_type":"C","score":0.401,"score_note":"재구매미반영","tags":["전용후보"]},{"product_no":1180,"product_name":"아이스온 노후크 브라","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"아이스온노후크브라","fo_orders":155,"rp_orders":189,"fo_qty":215,"fo_revenue":2633341,"fo_penetration_pct":3.6,"rp_penetration_pct":3.3,"first_index":1.097,"index_note":null,"bundle_type":null,"score":0.321,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":871,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏","is_exclusive":true,"pair_status":"전용","base_key":"쿨핏브라볼륨핏","fo_orders":154,"rp_orders":17,"fo_qty":154,"fo_revenue":4465845,"fo_penetration_pct":3.6,"rp_penetration_pct":0.3,"first_index":2,"index_note":null,"bundle_type":null,"score":0.515,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":98,"product_name":"쿨핏 브라 볼륨 서포트","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏브라볼륨서포트","fo_orders":151,"rp_orders":145,"fo_qty":175,"fo_revenue":4206259,"fo_penetration_pct":3.5,"rp_penetration_pct":2.5,"first_index":1.393,"index_note":null,"bundle_type":null,"score":0.382,"score_note":"재구매미반영","tags":["전용후보"]},{"product_no":741,"product_name":"[3+1] [25 VER.] 모달 브라탑 롱","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1][25VER.]모달브라탑롱","fo_orders":149,"rp_orders":203,"fo_qty":150,"fo_revenue":4221611,"fo_penetration_pct":3.5,"rp_penetration_pct":3.6,"first_index":0.982,"index_note":null,"bundle_type":"C","score":0.294,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1187,"product_name":"아이스온 노라인 팬티","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"아이스온노라인팬티","fo_orders":147,"rp_orders":194,"fo_qty":267,"fo_revenue":1734710,"fo_penetration_pct":3.4,"rp_penetration_pct":3.4,"first_index":1.013,"index_note":null,"bundle_type":null,"score":0.298,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":655,"product_name":"[25 VER.] 모달 브라탑 롱","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[25VER.]모달브라탑롱","fo_orders":134,"rp_orders":192,"fo_qty":151,"fo_revenue":1408301,"fo_penetration_pct":3.1,"rp_penetration_pct":3.4,"first_index":0.933,"index_note":null,"bundle_type":null,"score":0.274,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":416,"product_name":"라이트핏 스포츠브라 라운드넥","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"라이트핏스포츠브라라운드넥","fo_orders":124,"rp_orders":181,"fo_qty":142,"fo_revenue":2101136,"fo_penetration_pct":2.9,"rp_penetration_pct":3.2,"first_index":0.916,"index_note":null,"bundle_type":null,"score":0.266,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":148,"product_name":"쿨핏 팬티 볼륨핏 로고","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"쿨핏팬티볼륨핏로고","fo_orders":120,"rp_orders":163,"fo_qty":200,"fo_revenue":1300891,"fo_penetration_pct":2.8,"rp_penetration_pct":2.9,"first_index":0.985,"index_note":null,"bundle_type":null,"score":0.278,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1176,"product_name":"아이스온 에어리 브라","is_exclusive":false,"pair_status":"일반(전용쌍둥이있음)","base_key":"아이스온에어리브라","fo_orders":114,"rp_orders":136,"fo_qty":136,"fo_revenue":1657554,"fo_penetration_pct":2.7,"rp_penetration_pct":2.4,"first_index":1.121,"index_note":null,"bundle_type":null,"score":0.305,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1501,"product_name":"[3+1] 아이스온 하이웨이스트 드로즈","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1]아이스온하이웨이스트드로즈","fo_orders":105,"rp_orders":172,"fo_qty":106,"fo_revenue":2332439,"fo_penetration_pct":2.5,"rp_penetration_pct":3,"first_index":0.816,"index_note":null,"bundle_type":"C","score":0.235,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":802,"product_name":"[25 VER.] 쿨핏 브라 컴포트 BIG","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[25VER.]쿨핏브라컴포트BIG","fo_orders":104,"rp_orders":139,"fo_qty":127,"fo_revenue":2024045,"fo_penetration_pct":2.4,"rp_penetration_pct":2.4,"first_index":1.001,"index_note":null,"bundle_type":null,"score":0.272,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1021,"product_name":"코튼 팬티 노라인 4PACK","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"코튼팬티노라인4PACK","fo_orders":99,"rp_orders":157,"fo_qty":106,"fo_revenue":2920900,"fo_penetration_pct":2.3,"rp_penetration_pct":2.8,"first_index":0.843,"index_note":null,"bundle_type":"C","score":0.236,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1484,"product_name":"[3+1] [25 VER.] 아이스온 브라 브리즈","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"[3+1][25VER.]아이스온브라브리즈","fo_orders":96,"rp_orders":94,"fo_qty":99,"fo_revenue":3308010,"fo_penetration_pct":2.2,"rp_penetration_pct":1.6,"first_index":1.366,"index_note":null,"bundle_type":"C","score":0.345,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":1188,"product_name":"아이스온 하이웨이스트 드로즈","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"아이스온하이웨이스트드로즈","fo_orders":85,"rp_orders":131,"fo_qty":130,"fo_revenue":948908,"fo_penetration_pct":2,"rp_penetration_pct":2.3,"first_index":0.868,"index_note":null,"bundle_type":null,"score":0.234,"score_note":"재구매미반영","tags":["주력유지"]},{"product_no":236,"product_name":"레이셋 팬티 볼륨핏","is_exclusive":false,"pair_status":"일반(전용없음)","base_key":"레이셋팬티볼륨핏","fo_orders":73,"rp_orders":133,"fo_qty":110,"fo_revenue":512219,"fo_penetration_pct":1.7,"rp_penetration_pct":2.3,"first_index":0.734,"index_note":null,"bundle_type":null,"score":0.198,"score_note":"재구매미반영","tags":["재구매형"]}],"lineup":[{"product_no":871,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏","fo_orders":154,"rp_orders":17,"fo_qty":154,"fo_revenue":4465845,"fo_penetration_pct":3.6,"pair_products":[1211,988,987,83],"pair_fo_orders":51,"absorption_pct":75.1,"verdict":"주력"},{"product_no":880,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏 PLUS","fo_orders":64,"rp_orders":7,"fo_qty":64,"fo_revenue":1938625,"fo_penetration_pct":1.5,"pair_products":[1212,935,933,932,194],"pair_fo_orders":21,"absorption_pct":75.3,"verdict":"주력"},{"product_no":1035,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨 리프트업","fo_orders":61,"rp_orders":6,"fo_qty":61,"fo_revenue":1721305,"fo_penetration_pct":1.4,"pair_products":[1010,1009,391],"pair_fo_orders":10,"absorption_pct":85.9,"verdict":"주력"},{"product_no":881,"product_name":"[첫 구매 전용] 쿨핏 브라 컴포트 BIG","fo_orders":28,"rp_orders":4,"fo_qty":28,"fo_revenue":848427,"fo_penetration_pct":0.7,"pair_products":[1221,1005,1004,285],"pair_fo_orders":10,"absorption_pct":73.7,"verdict":"주력"},{"product_no":1268,"product_name":"[첫 구매 전용] 코튼 립 스퀘어넥 브라탑","fo_orders":11,"rp_orders":0,"fo_qty":11,"fo_revenue":263200,"fo_penetration_pct":0.3,"pair_products":[1100],"pair_fo_orders":2,"absorption_pct":84.6,"verdict":"주력"},{"product_no":1237,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","fo_orders":1,"rp_orders":0,"fo_qty":1,"fo_revenue":34351,"fo_penetration_pct":0,"pair_products":[1236,1235,1234,1177,1176],"pair_fo_orders":114,"absorption_pct":0.9,"verdict":"노출부족"},{"product_no":1343,"product_name":"[첫 구매 전용] 에센셜핏 스쿱 브라렛","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1351,1350,1303],"pair_fo_orders":6,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":1342,"product_name":"[첫 구매 전용] 에센셜핏 백리스 브라렛","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1302],"pair_fo_orders":11,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":1341,"product_name":"[첫 구매 전용] 에센셜핏 홀터 브라렛","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1301],"pair_fo_orders":5,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":1340,"product_name":"[첫 구매 전용] 아이스온 오프숄더 브라","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1491,1490,1185,1184],"pair_fo_orders":551,"absorption_pct":0,"verdict":"노출부족"},{"product_no":1339,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1236,1235,1234,1177,1176],"pair_fo_orders":114,"absorption_pct":0,"verdict":"노출부족"},{"product_no":1338,"product_name":"[첫 구매 전용] 모달 U넥 브라탑","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1108],"pair_fo_orders":1,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":1337,"product_name":"[첫 구매 전용] 모달 브라탑","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1208,1207,1107],"pair_fo_orders":3,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":1242,"product_name":"[첫 구매 전용] 아이스온 푸시업 브라","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1241,1240,1239,1179,1178],"pair_fo_orders":324,"absorption_pct":0,"verdict":"노출부족"},{"product_no":963,"product_name":"[첫 구매 전용] 웜터치 브라탑 롱슬리브","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[966,896,187],"pair_fo_orders":0,"absorption_pct":null,"verdict":"정리후보(창내 0판매)"},{"product_no":875,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[71],"pair_fo_orders":35,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":874,"product_name":"[첫 구매 전용] 쿨핏 팬티","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1216,1053,994,993,28],"pair_fo_orders":26,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"},{"product_no":873,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[1214,926,925,32],"pair_fo_orders":57,"absorption_pct":0,"verdict":"노출부족"},{"product_no":748,"product_name":"[첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","fo_orders":0,"rp_orders":0,"fo_qty":0,"fo_revenue":0,"fo_penetration_pct":0,"pair_products":[668],"pair_fo_orders":48,"absorption_pct":0,"verdict":"정리후보(창내 0판매)"}],"actions":[{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"681 [25 VER.] 아이스온 브라 메쉬 컴포트 BIG","evidence":"첫구매 226건 / 침투율 5.3% / 첫구매지수 1.254 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"1492 [3+1] 아이스온 오프숄더 브라","evidence":"첫구매 158건 / 침투율 3.7% / 첫구매지수 1.457 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"98 쿨핏 브라 볼륨 서포트","evidence":"첫구매 151건 / 침투율 3.5% / 첫구매지수 1.393 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"588 모달 브라렛 밴드&팬티 set","evidence":"첫구매 67건 / 침투율 1.6% / 첫구매지수 1.629 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"690 코튼 브라 로고밴드","evidence":"첫구매 35건 / 침투율 0.8% / 첫구매지수 2 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"1489 [3+1] 아이스온 스트랩 노후크 브라","evidence":"첫구매 30건 / 침투율 0.7% / 첫구매지수 1.744 / 전용 버전 없음 (연속성은 일별 적재 후 확정)","action":"전용 리스팅을 만든다. 가격·구성은 짝 일반상품 기준으로 제안","owner":"MD","window":"2026-08-19"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1237 [첫 구매 전용] 아이스온 에어리 브라","evidence":"흡수율 0.9% (전용 1건 vs 짝 일반 114건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-08-19"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1340 [첫 구매 전용] 아이스온 오프숄더 브라","evidence":"흡수율 0% (전용 0건 vs 짝 일반 551건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-08-19"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1339 [첫 구매 전용] 아이스온 에어리 브라","evidence":"흡수율 0% (전용 0건 vs 짝 일반 114건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-08-19"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1242 [첫 구매 전용] 아이스온 푸시업 브라","evidence":"흡수율 0% (전용 0건 vs 짝 일반 324건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-08-19"},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"873 [첫 구매 전용] 쿨핏 브라 시그니처","evidence":"흡수율 0% (전용 0건 vs 짝 일반 57건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"첫구매 진입면 배너·PDP 배지·전용 가격차를 재검토","owner":"그로스","window":"2026-08-19"},{"rule":"R4","priority":"P1","type":"첫구매 진입면 재설계","target":"(전체)","evidence":"전용 커버리지 7.4% < 15% — 첫구매 4268건 중 316건만 전용 상품을 담았다","action":"가입완료·첫방문 진입면에 전용관 노출을 재설계","owner":"그로스","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1343 [첫 구매 전용] 에센셜핏 스쿱 브라렛","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 6건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1342 [첫 구매 전용] 에센셜핏 백리스 브라렛","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 11건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1341 [첫 구매 전용] 에센셜핏 홀터 브라렛","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 5건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1338 [첫 구매 전용] 모달 U넥 브라탑","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 1건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1337 [첫 구매 전용] 모달 브라탑","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 3건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"963 [첫 구매 전용] 웜터치 브라탑 롱슬리브","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 0건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"875 [첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 35건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"874 [첫 구매 전용] 쿨핏 팬티","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 26건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"748 [첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","evidence":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 48건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]","action":"진열 제외 또는 상품 교체. 0판매 사유(가격차·노출면·이미지) 확인","owner":"MD","window":"2026-08-19"}]}],"cross":[{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"873 [첫 구매 전용] 쿨핏 브라 시그니처","owner":"그로스","confirmed":true,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"흡수율 0% (전용 0건 vs 짝 일반 165건) — 수요는 있는데 전용으로 안 온다"},{"window":"2026-08-19","promo":true,"text":"흡수율 0% (전용 0건 vs 짝 일반 57건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"963 [첫 구매 전용] 웜터치 브라탑 롱슬리브","owner":"MD","confirmed":true,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 0건). 14일 연속 여부는 일별 적재 후 확정"},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 0건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"119 쿨핏 브라 오프숄더","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"첫구매 323건 / 침투율 8.6% / 첫구매지수 1.522 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"},{"window":"2026-08-19","promo":true,"text":null}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"162 착착 브라","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"첫구매 53건 / 침투율 1.4% / 첫구매지수 1.648 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"},{"window":"2026-08-19","promo":true,"text":null}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"681 [25 VER.] 아이스온 브라 메쉬 컴포트 BIG","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 226건 / 침투율 5.3% / 첫구매지수 1.254 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"1492 [3+1] 아이스온 오프숄더 브라","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 158건 / 침투율 3.7% / 첫구매지수 1.457 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"98 쿨핏 브라 볼륨 서포트","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 151건 / 침투율 3.5% / 첫구매지수 1.393 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"588 모달 브라렛 밴드&팬티 set","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 67건 / 침투율 1.6% / 첫구매지수 1.629 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"690 코튼 브라 로고밴드","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 35건 / 침투율 0.8% / 첫구매지수 2 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R1","priority":"P1","type":"전용 리스팅 등록","target":"1489 [3+1] 아이스온 스트랩 노후크 브라","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"첫구매 30건 / 침투율 0.7% / 첫구매지수 1.744 / 전용 버전 없음 (연속성은 일별 적재 후 확정)"}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"875 [첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"흡수율 0% (전용 0건 vs 짝 일반 70건) — 수요는 있는데 전용으로 안 온다"},{"window":"2026-08-19","promo":true,"text":null}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"874 [첫 구매 전용] 쿨핏 팬티","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"흡수율 0% (전용 0건 vs 짝 일반 110건) — 수요는 있는데 전용으로 안 온다"},{"window":"2026-08-19","promo":true,"text":null}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1237 [첫 구매 전용] 아이스온 에어리 브라","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"흡수율 0.9% (전용 1건 vs 짝 일반 114건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1340 [첫 구매 전용] 아이스온 오프숄더 브라","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"흡수율 0% (전용 0건 vs 짝 일반 551건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1339 [첫 구매 전용] 아이스온 에어리 브라","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"흡수율 0% (전용 0건 vs 짝 일반 114건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R3","priority":"P1","type":"노출·가격 재검토","target":"1242 [첫 구매 전용] 아이스온 푸시업 브라","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"흡수율 0% (전용 0건 vs 짝 일반 324건) — 수요는 있는데 전용으로 안 온다 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R4","priority":"P1","type":"첫구매 진입면 재설계","target":"(전체)","owner":"그로스","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"전용 커버리지 7.4% < 15% — 첫구매 4268건 중 316건만 전용 상품을 담았다"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1237 [첫 구매 전용] 아이스온 에어리 브라","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 18건). 14일 연속 여부는 일별 적재 후 확정"},{"window":"2026-08-19","promo":true,"text":null}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1343 [첫 구매 전용] 에센셜핏 스쿱 브라렛","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 6건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1342 [첫 구매 전용] 에센셜핏 백리스 브라렛","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 11건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1341 [첫 구매 전용] 에센셜핏 홀터 브라렛","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 5건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1338 [첫 구매 전용] 모달 U넥 브라탑","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 1건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"1337 [첫 구매 전용] 모달 브라탑","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 3건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"875 [첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 35건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"874 [첫 구매 전용] 쿨핏 팬티","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 26건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R2","priority":"P2","type":"진열 제외 또는 교체","target":"748 [첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":null},{"window":"2026-08-19","promo":true,"text":"이 창에서 첫구매 0건 (짝 일반상품 첫구매 48건). 14일 연속 여부는 일별 적재 후 확정 [주의: 행사기간 창 — 번들 잠식일 수 있다. 평상시 창과 교차 확인 필요]"}]},{"rule":"R5","priority":"P2","type":"전용 상품 구성 보강","target":"(전체)","owner":"MD","confirmed":false,"evidence":[{"window":"2026-07-22 ~ 2026-07-28","promo":false,"text":"전용포함 첫구매 AOV 37128원 vs 미포함 63236원 (비율 0.587) — 전용이 객단가를 낮춘다"},{"window":"2026-08-19","promo":true,"text":null}]}],"lineupCross":[{"product_no":748,"product_name":"[첫 구매 전용] 쿨핏 브라 오프숄더 볼륨","cells":[{"verdict":"주력","fo":467,"pair":384,"absorption":54.9},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":48,"absorption":0}]},{"product_no":871,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏","cells":[{"verdict":"주력","fo":195,"pair":177,"absorption":52.4},{"verdict":"주력","fo":154,"pair":51,"absorption":75.1}]},{"product_no":1340,"product_name":"[첫 구매 전용] 아이스온 오프숄더 브라","cells":[{"verdict":"주력","fo":142,"pair":113,"absorption":55.7},{"verdict":"노출부족","fo":0,"pair":551,"absorption":0}]},{"product_no":1242,"product_name":"[첫 구매 전용] 아이스온 푸시업 브라","cells":[{"verdict":"주력","fo":94,"pair":22,"absorption":81},{"verdict":"노출부족","fo":0,"pair":324,"absorption":0}]},{"product_no":880,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨핏 PLUS","cells":[{"verdict":"관찰","fo":73,"pair":95,"absorption":43.5},{"verdict":"주력","fo":64,"pair":21,"absorption":75.3}]},{"product_no":1342,"product_name":"[첫 구매 전용] 에센셜핏 백리스 브라렛","cells":[{"verdict":"주력","fo":55,"pair":47,"absorption":53.9},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":11,"absorption":0}]},{"product_no":1337,"product_name":"[첫 구매 전용] 모달 브라탑","cells":[{"verdict":"주력","fo":55,"pair":35,"absorption":61.1},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":3,"absorption":0}]},{"product_no":881,"product_name":"[첫 구매 전용] 쿨핏 브라 컴포트 BIG","cells":[{"verdict":"주력","fo":53,"pair":44,"absorption":54.6},{"verdict":"주력","fo":28,"pair":10,"absorption":73.7}]},{"product_no":1339,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","cells":[{"verdict":"주력","fo":49,"pair":18,"absorption":73.1},{"verdict":"노출부족","fo":0,"pair":114,"absorption":0}]},{"product_no":1338,"product_name":"[첫 구매 전용] 모달 U넥 브라탑","cells":[{"verdict":"주력","fo":44,"pair":28,"absorption":61.1},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":1,"absorption":0}]},{"product_no":1343,"product_name":"[첫 구매 전용] 에센셜핏 스쿱 브라렛","cells":[{"verdict":"주력","fo":35,"pair":26,"absorption":57.4},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":6,"absorption":0}]},{"product_no":1341,"product_name":"[첫 구매 전용] 에센셜핏 홀터 브라렛","cells":[{"verdict":"관찰","fo":9,"pair":18,"absorption":33.3},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":5,"absorption":0}]},{"product_no":1268,"product_name":"[첫 구매 전용] 코튼 립 스퀘어넥 브라탑","cells":[{"verdict":"주력","fo":6,"pair":6,"absorption":50},{"verdict":"주력","fo":11,"pair":2,"absorption":84.6}]},{"product_no":1035,"product_name":"[첫 구매 전용] 쿨핏 브라 볼륨 리프트업","cells":[{"verdict":"주력","fo":4,"pair":3,"absorption":57.1},{"verdict":"주력","fo":61,"pair":10,"absorption":85.9}]},{"product_no":1237,"product_name":"[첫 구매 전용] 아이스온 에어리 브라","cells":[{"verdict":"정리후보(창내 0판매)","fo":0,"pair":18,"absorption":0},{"verdict":"노출부족","fo":1,"pair":114,"absorption":0.9}]},{"product_no":963,"product_name":"[첫 구매 전용] 웜터치 브라탑 롱슬리브","cells":[{"verdict":"정리후보(창내 0판매)","fo":0,"pair":0,"absorption":null},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":0,"absorption":null}]},{"product_no":875,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처&팬티 set","cells":[{"verdict":"노출부족","fo":0,"pair":70,"absorption":0},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":35,"absorption":0}]},{"product_no":874,"product_name":"[첫 구매 전용] 쿨핏 팬티","cells":[{"verdict":"노출부족","fo":0,"pair":110,"absorption":0},{"verdict":"정리후보(창내 0판매)","fo":0,"pair":26,"absorption":0}]},{"product_no":873,"product_name":"[첫 구매 전용] 쿨핏 브라 시그니처","cells":[{"verdict":"노출부족","fo":0,"pair":165,"absorption":0},{"verdict":"노출부족","fo":0,"pair":57,"absorption":0}]}],"dailyTotals":[{"date":"2026-07-21","revenue":5980973,"orders":269,"aov":37830,"share":6.14},{"date":"2026-07-22","revenue":4874561,"orders":217,"aov":38720,"share":5.52},{"date":"2026-07-23","revenue":5254033,"orders":234,"aov":38401,"share":6.22},{"date":"2026-07-24","revenue":3761987,"orders":167,"aov":44080,"share":5.13},{"date":"2026-07-25","revenue":3861361,"orders":167,"aov":41335,"share":5.29},{"date":"2026-07-26","revenue":4693240,"orders":199,"aov":41079,"share":5.64},{"date":"2026-07-27","revenue":5124964,"orders":229,"aov":41336,"share":5.12},{"date":"2026-07-28","revenue":6050728,"orders":279,"aov":35619,"share":6.03},{"date":"2026-07-29","revenue":6082379,"orders":284,"aov":34137,"share":6.21},{"date":"2026-07-30","revenue":5331081,"orders":244,"aov":36863,"share":5.85},{"date":"2026-07-31","revenue":7386539,"orders":340,"aov":38338,"share":5.42},{"date":"2026-08-01","revenue":2462329,"orders":81,"aov":50249,"share":3.48},{"date":"2026-08-02","revenue":2977336,"orders":98,"aov":55032,"share":3.34},{"date":"2026-08-03","revenue":2265035,"orders":75,"aov":55878,"share":2.68},{"date":"2026-08-04","revenue":3255212,"orders":101,"aov":55859,"share":3.71},{"date":"2026-08-05","revenue":3405914,"orders":107,"aov":48452,"share":4.07},{"date":"2026-08-06","revenue":3115768,"orders":97,"aov":57807,"share":3.77},{"date":"2026-08-07","revenue":2578926,"orders":85,"aov":54870,"share":3.54},{"date":"2026-08-08","revenue":2652005,"orders":89,"aov":53974,"share":4.07},{"date":"2026-08-09","revenue":3740890,"orders":124,"aov":50987,"share":4.92},{"date":"2026-08-10","revenue":3071331,"orders":96,"aov":51473,"share":4.33},{"date":"2026-08-11","revenue":2590476,"orders":86,"aov":51029,"share":3.77},{"date":"2026-08-12","revenue":2336207,"orders":79,"aov":48242,"share":3.69},{"date":"2026-08-13","revenue":2059983,"orders":64,"aov":61741,"share":3.59},{"date":"2026-08-14","revenue":1851178,"orders":62,"aov":54479,"share":3.77},{"date":"2026-08-15","revenue":1985051,"orders":62,"aov":58013,"share":4.13},{"date":"2026-08-16","revenue":2320817,"orders":77,"aov":49671,"share":4.09},{"date":"2026-08-17","revenue":2780070,"orders":89,"aov":48590,"share":4.42},{"date":"2026-08-18","revenue":7087179,"orders":240,"aov":53216,"share":1.54},{"date":"2026-08-19","revenue":10248635,"orders":348,"aov":53576,"share":1.9}]};
+  /* DATA_END */
 
-  /* DAILY_TOTALS_START */
-  var dailyTotals = [{"date":"2026-07-21","revenue":5980973,"orders":269,"aov":37830,"share":6.14},{"date":"2026-07-22","revenue":4874561,"orders":217,"aov":38720,"share":5.52},{"date":"2026-07-23","revenue":5254033,"orders":234,"aov":38401,"share":6.22},{"date":"2026-07-24","revenue":3761987,"orders":167,"aov":44080,"share":5.13},{"date":"2026-07-25","revenue":3861361,"orders":167,"aov":41335,"share":5.29},{"date":"2026-07-26","revenue":4693240,"orders":199,"aov":41079,"share":5.64},{"date":"2026-07-27","revenue":5124964,"orders":229,"aov":41336,"share":5.12},{"date":"2026-07-28","revenue":6050728,"orders":279,"aov":35619,"share":6.03},{"date":"2026-07-29","revenue":6082379,"orders":284,"aov":34137,"share":6.21},{"date":"2026-07-30","revenue":5331081,"orders":244,"aov":36863,"share":5.85},{"date":"2026-07-31","revenue":7386539,"orders":340,"aov":38338,"share":5.42},{"date":"2026-08-01","revenue":2462329,"orders":81,"aov":50249,"share":3.48},{"date":"2026-08-02","revenue":2977336,"orders":98,"aov":55032,"share":3.34},{"date":"2026-08-03","revenue":2265035,"orders":75,"aov":55878,"share":2.68},{"date":"2026-08-04","revenue":3255212,"orders":101,"aov":55859,"share":3.71},{"date":"2026-08-05","revenue":3405914,"orders":107,"aov":48452,"share":4.07},{"date":"2026-08-06","revenue":3115768,"orders":97,"aov":57807,"share":3.77},{"date":"2026-08-07","revenue":2578926,"orders":85,"aov":54870,"share":3.54},{"date":"2026-08-08","revenue":2652005,"orders":89,"aov":53974,"share":4.07},{"date":"2026-08-09","revenue":3740890,"orders":124,"aov":50987,"share":4.92},{"date":"2026-08-10","revenue":3071331,"orders":96,"aov":51473,"share":4.33},{"date":"2026-08-11","revenue":2590476,"orders":86,"aov":51029,"share":3.77},{"date":"2026-08-12","revenue":2336207,"orders":79,"aov":48242,"share":3.69},{"date":"2026-08-13","revenue":2059983,"orders":64,"aov":61741,"share":3.59},{"date":"2026-08-14","revenue":1851178,"orders":62,"aov":54479,"share":3.77},{"date":"2026-08-15","revenue":1985051,"orders":62,"aov":58013,"share":4.13},{"date":"2026-08-16","revenue":2320817,"orders":77,"aov":49671,"share":4.09},{"date":"2026-08-17","revenue":2780070,"orders":89,"aov":48590,"share":4.42},{"date":"2026-08-18","revenue":7087179,"orders":240,"aov":53216,"share":1.54},{"date":"2026-08-19","revenue":10248635,"orders":348,"aov":53576,"share":1.9}];
-  /* DAILY_TOTALS_END */
+  var W = DATA.windows || [];
+  var BASE = W[0] || null;              // 평상시 창 — 판단의 기준
+  var SVGNS = "http://www.w3.org/2000/svg";
 
-  /* DAILY_PRODUCTS_START */
-  // Full per-product breakdown for every date (all tracked SKUs, incl. zero-sale rows)
-  var dailyProducts = {"2026-07-21":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1465165,"orders":50,"aov":49486,"share":1.5},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1311467,"orders":74,"aov":28738,"share":1.35},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":606588,"orders":29,"aov":33750,"share":0.62},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":522709,"orders":26,"aov":31907,"share":0.54},{"no":1337,"name":"모달 브라탑","revenue":352906,"orders":19,"aov":48122,"share":0.36},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":351960,"orders":12,"aov":40463,"share":0.36},{"no":1339,"name":"아이스온 에어리 브라","revenue":326957,"orders":16,"aov":43897,"share":0.34},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":278660,"orders":9,"aov":48394,"share":0.29},{"no":1242,"name":"아이스온 푸시업 브라","revenue":272300,"orders":14,"aov":35486,"share":0.28},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":236511,"orders":11,"aov":55779,"share":0.24},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":166050,"orders":9,"aov":33072,"share":0.17},{"no":1338,"name":"모달 U넥 브라탑","revenue":89700,"orders":6,"aov":42883,"share":0.09},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-22":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1318620,"orders":71,"aov":34641,"share":1.49},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1101373,"orders":37,"aov":53459,"share":1.25},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":503055,"orders":28,"aov":30592,"share":0.57},{"no":1242,"name":"아이스온 푸시업 브라","revenue":364794,"orders":18,"aov":45769,"share":0.41},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":332108,"orders":11,"aov":72701,"share":0.38},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":309081,"orders":10,"aov":45105,"share":0.35},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":221400,"orders":12,"aov":36667,"share":0.25},{"no":1337,"name":"모달 브라탑","revenue":209300,"orders":13,"aov":31096,"share":0.24},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":202950,"orders":10,"aov":31800,"share":0.23},{"no":1338,"name":"모달 U넥 브라탑","revenue":149500,"orders":9,"aov":31639,"share":0.17},{"no":1339,"name":"아이스온 에어리 브라","revenue":116700,"orders":5,"aov":58970,"share":0.13},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":27230,"orders":1,"aov":30230,"share":0.03},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":18450,"orders":1,"aov":21450,"share":0.02},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-23":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1475248,"orders":84,"aov":28455,"share":1.75},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1032487,"orders":35,"aov":51320,"share":1.22},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":571766,"orders":18,"aov":59306,"share":0.68},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":488600,"orders":28,"aov":33300,"share":0.58},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":338910,"orders":11,"aov":40847,"share":0.4},{"no":1339,"name":"아이스온 에어리 브라","revenue":326645,"orders":15,"aov":61033,"share":0.39},{"no":1242,"name":"아이스온 푸시업 브라","revenue":272300,"orders":14,"aov":28571,"share":0.32},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":233691,"orders":11,"aov":39236,"share":0.28},{"no":1337,"name":"모달 브라탑","revenue":206468,"orders":12,"aov":24070,"share":0.24},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":179500,"orders":7,"aov":59077,"share":0.21},{"no":1338,"name":"모달 U넥 브라탑","revenue":74750,"orders":3,"aov":47750,"share":0.09},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":35218,"orders":1,"aov":114800,"share":0.04},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":18450,"orders":1,"aov":21450,"share":0.02},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-24":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1137047,"orders":62,"aov":42723,"share":1.55},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":861479,"orders":29,"aov":46272,"share":1.18},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":314440,"orders":10,"aov":37229,"share":0.43},{"no":1242,"name":"아이스온 푸시업 브라","revenue":297762,"orders":15,"aov":44739,"share":0.41},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":258987,"orders":14,"aov":33996,"share":0.35},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":249710,"orders":8,"aov":73889,"share":0.34},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":194401,"orders":10,"aov":47555,"share":0.27},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":127647,"orders":7,"aov":48864,"share":0.17},{"no":1338,"name":"모달 U넥 브라탑","revenue":113352,"orders":6,"aov":66733,"share":0.15},{"no":1337,"name":"모달 브라탑","revenue":102132,"orders":5,"aov":44770,"share":0.14},{"no":1339,"name":"아이스온 에어리 브라","revenue":77800,"orders":4,"aov":22450,"share":0.11},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":27230,"orders":1,"aov":30230,"share":0.04},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-25":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1003487,"orders":54,"aov":31926,"share":1.38},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":925751,"orders":31,"aov":59149,"share":1.27},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":309170,"orders":10,"aov":44687,"share":0.42},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":300926,"orders":10,"aov":43627,"share":0.41},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":291803,"orders":15,"aov":28315,"share":0.4},{"no":1242,"name":"아이스온 푸시업 브라","revenue":207554,"orders":10,"aov":46156,"share":0.28},{"no":1339,"name":"아이스온 에어리 브라","revenue":155600,"orders":8,"aov":35950,"share":0.21},{"no":1337,"name":"모달 브라탑","revenue":149500,"orders":9,"aov":35848,"share":0.2},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":147600,"orders":7,"aov":41050,"share":0.2},{"no":1338,"name":"모달 U넥 브라탑","revenue":119600,"orders":8,"aov":48038,"share":0.16},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":92250,"orders":5,"aov":49310,"share":0.13},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":91990,"orders":3,"aov":111883,"share":0.13},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":66130,"orders":2,"aov":48530,"share":0.09},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-26":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1355559,"orders":72,"aov":32540,"share":1.63},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1096851,"orders":37,"aov":50635,"share":1.32},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":451900,"orders":24,"aov":31223,"share":0.54},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":360340,"orders":11,"aov":54725,"share":0.43},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":346727,"orders":11,"aov":59288,"share":0.42},{"no":1242,"name":"아이스온 푸시업 브라","revenue":306964,"orders":14,"aov":72186,"share":0.37},{"no":1339,"name":"아이스온 에어리 브라","revenue":189500,"orders":10,"aov":36500,"share":0.23},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":174645,"orders":8,"aov":61858,"share":0.21},{"no":1338,"name":"모달 U넥 브라탑","revenue":171833,"orders":9,"aov":63821,"share":0.21},{"no":1337,"name":"모달 브라탑","revenue":160541,"orders":9,"aov":46350,"share":0.19},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":55350,"orders":3,"aov":21450,"share":0.07},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":23030,"orders":1,"aov":26030,"share":0.03},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-27":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1417477,"orders":79,"aov":27375,"share":1.42},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":908467,"orders":30,"aov":55780,"share":0.91},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":584643,"orders":19,"aov":59555,"share":0.58},{"no":1242,"name":"아이스온 푸시업 브라","revenue":527221,"orders":24,"aov":57609,"share":0.53},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":445740,"orders":24,"aov":33212,"share":0.45},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":249777,"orders":8,"aov":64051,"share":0.25},{"no":1339,"name":"아이스온 에어리 브라","revenue":228982,"orders":11,"aov":45022,"share":0.23},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":178416,"orders":8,"aov":35116,"share":0.18},{"no":1338,"name":"모달 U넥 브라탑","revenue":149500,"orders":10,"aov":40470,"share":0.15},{"no":1337,"name":"모달 브라탑","revenue":119600,"orders":6,"aov":35308,"share":0.12},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":107087,"orders":5,"aov":48872,"share":0.11},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":105546,"orders":5,"aov":52036,"share":0.11},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":75278,"orders":3,"aov":49100,"share":0.08},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":27230,"orders":1,"aov":30230,"share":0.03},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-28":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":2116750,"orders":117,"aov":25151,"share":2.11},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1247779,"orders":41,"aov":57370,"share":1.24},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":593300,"orders":33,"aov":24242,"share":0.59},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":535475,"orders":17,"aov":57621,"share":0.53},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":343200,"orders":11,"aov":49255,"share":0.34},{"no":1242,"name":"아이스온 푸시업 브라","revenue":310559,"orders":16,"aov":42225,"share":0.31},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":217491,"orders":11,"aov":42301,"share":0.22},{"no":1339,"name":"아이스온 에어리 브라","revenue":175050,"orders":9,"aov":46961,"share":0.17},{"no":1337,"name":"모달 브라탑","revenue":146975,"orders":9,"aov":42570,"share":0.15},{"no":1338,"name":"모달 U넥 브라탑","revenue":134550,"orders":9,"aov":29172,"share":0.13},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":108524,"orders":5,"aov":49160,"share":0.11},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":92250,"orders":5,"aov":24310,"share":0.09},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":28825,"orders":1,"aov":84890,"share":0.03},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-29":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":2519256,"orders":139,"aov":26894,"share":2.57},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":856902,"orders":29,"aov":47891,"share":0.87},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":608131,"orders":33,"aov":34041,"share":0.62},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":373230,"orders":12,"aov":46923,"share":0.38},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":319057,"orders":10,"aov":88632,"share":0.33},{"no":1242,"name":"아이스온 푸시업 브라","revenue":318414,"orders":14,"aov":37332,"share":0.33},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":239850,"orders":12,"aov":36908,"share":0.24},{"no":1337,"name":"모달 브라탑","revenue":206747,"orders":12,"aov":31201,"share":0.21},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":166050,"orders":9,"aov":40939,"share":0.17},{"no":1339,"name":"아이스온 에어리 브라","revenue":155600,"orders":8,"aov":36688,"share":0.16},{"no":1338,"name":"모달 U넥 브라탑","revenue":145977,"orders":9,"aov":40007,"share":0.15},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":110700,"orders":6,"aov":28417,"share":0.11},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":62465,"orders":2,"aov":112590,"share":0.06},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-30":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":1665316,"orders":96,"aov":25784,"share":1.83},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":686762,"orders":22,"aov":51581,"share":0.75},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":610750,"orders":33,"aov":33698,"share":0.67},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":541522,"orders":25,"aov":41268,"share":0.59},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":305562,"orders":10,"aov":54968,"share":0.34},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":256351,"orders":8,"aov":62661,"share":0.28},{"no":1337,"name":"모달 브라탑","revenue":236638,"orders":13,"aov":46841,"share":0.26},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":216370,"orders":11,"aov":60991,"share":0.24},{"no":1339,"name":"아이스온 에어리 브라","revenue":190548,"orders":9,"aov":44598,"share":0.21},{"no":1242,"name":"아이스온 푸시업 브라","revenue":190548,"orders":9,"aov":43242,"share":0.21},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":166050,"orders":7,"aov":66507,"share":0.18},{"no":1338,"name":"모달 U넥 브라탑","revenue":104650,"orders":5,"aov":36030,"share":0.11},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":97736,"orders":4,"aov":64423,"share":0.11},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":62278,"orders":2,"aov":59915,"share":0.07},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-07-31":[{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":2464152,"orders":135,"aov":27901,"share":1.81},{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":936738,"orders":31,"aov":50086,"share":0.69},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":856971,"orders":27,"aov":66096,"share":0.63},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":682650,"orders":37,"aov":33818,"share":0.5},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":519434,"orders":28,"aov":27700,"share":0.38},{"no":1242,"name":"아이스온 푸시업 브라","revenue":369550,"orders":18,"aov":33264,"share":0.27},{"no":1337,"name":"모달 브라탑","revenue":254150,"orders":14,"aov":46346,"share":0.19},{"no":1338,"name":"모달 U넥 브라탑","revenue":247516,"orders":11,"aov":95594,"share":0.18},{"no":1339,"name":"아이스온 에어리 브라","revenue":233400,"orders":12,"aov":31667,"share":0.17},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":231997,"orders":12,"aov":38291,"share":0.17},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":218037,"orders":7,"aov":64961,"share":0.16},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":147600,"orders":8,"aov":51550,"share":0.11},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":125020,"orders":5,"aov":49464,"share":0.09},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":99324,"orders":3,"aov":65210,"share":0.07},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-01":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1071369,"orders":37,"aov":46366,"share":1.51},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":536534,"orders":18,"aov":49106,"share":0.76},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":407654,"orders":13,"aov":48664,"share":0.58},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":342658,"orders":12,"aov":55433,"share":0.48},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":55350,"orders":2,"aov":38400,"share":0.08},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":30314,"orders":1,"aov":234500,"share":0.04},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":18450,"orders":1,"aov":55350,"share":0.03},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-02":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1315066,"orders":45,"aov":55938,"share":1.48},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":719842,"orders":24,"aov":57803,"share":0.81},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":411822,"orders":14,"aov":46709,"share":0.46},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":390390,"orders":13,"aov":61668,"share":0.44},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":120766,"orders":5,"aov":57744,"share":0.14},{"no":1242,"name":"아이스온 푸시업 브라","revenue":19450,"orders":1,"aov":49250,"share":0.02},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-03":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":932589,"orders":31,"aov":64682,"share":1.1},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":553080,"orders":18,"aov":54488,"share":0.65},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":360360,"orders":12,"aov":34188,"share":0.43},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":314402,"orders":11,"aov":55088,"share":0.37},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":69090,"orders":3,"aov":65897,"share":0.08},{"no":1242,"name":"아이스온 푸시업 브라","revenue":35514,"orders":1,"aov":125900,"share":0.04},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-04":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1451676,"orders":47,"aov":60179,"share":1.66},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":859024,"orders":29,"aov":53205,"share":0.98},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":416130,"orders":13,"aov":51495,"share":0.47},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":245151,"orders":8,"aov":76110,"share":0.28},{"no":1237,"name":"아이스온 에어리 브라","revenue":184196,"orders":6,"aov":85548,"share":0.21},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":99035,"orders":4,"aov":57148,"share":0.11},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-05":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1249883,"orders":43,"aov":51822,"share":1.49},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":1088615,"orders":37,"aov":48432,"share":1.3},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":553129,"orders":18,"aov":58692,"share":0.66},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":429518,"orders":14,"aov":46256,"share":0.51},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":84769,"orders":3,"aov":47887,"share":0.1},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-06":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1419799,"orders":47,"aov":63856,"share":1.72},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":647411,"orders":22,"aov":47260,"share":0.78},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":538123,"orders":18,"aov":68323,"share":0.65},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":307260,"orders":9,"aov":72539,"share":0.37},{"no":1237,"name":"아이스온 에어리 브라","revenue":157115,"orders":5,"aov":63438,"share":0.19},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":46060,"orders":2,"aov":26030,"share":0.06},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-07":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1292762,"orders":44,"aov":52900,"share":1.78},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":434659,"orders":14,"aov":55788,"share":0.6},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":380991,"orders":12,"aov":58023,"share":0.52},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":341356,"orders":12,"aov":60467,"share":0.47},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":74698,"orders":3,"aov":72120,"share":0.1},{"no":1237,"name":"아이스온 에어리 브라","revenue":54460,"orders":2,"aov":60630,"share":0.07},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-08":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":949306,"orders":33,"aov":58525,"share":1.46},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":745820,"orders":25,"aov":43549,"share":1.15},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":403899,"orders":14,"aov":60638,"share":0.62},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":309170,"orders":10,"aov":49177,"share":0.47},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":134890,"orders":5,"aov":82664,"share":0.21},{"no":1237,"name":"아이스온 에어리 브라","revenue":108920,"orders":4,"aov":40455,"share":0.17},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-09":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1373743,"orders":48,"aov":46082,"share":1.81},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":988840,"orders":33,"aov":48075,"share":1.3},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":585748,"orders":19,"aov":66439,"share":0.77},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":521133,"orders":17,"aov":48016,"share":0.69},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":189736,"orders":7,"aov":79500,"share":0.25},{"no":1237,"name":"아이스온 에어리 브라","revenue":81690,"orders":3,"aov":30230,"share":0.11},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":877,"name":"모달 브라탑 롱","revenue":0,"orders":0,"aov":0,"share":0},{"no":876,"name":"모달 브라탑 크롭","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-10":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1388318,"orders":47,"aov":53832,"share":1.96},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":808860,"orders":26,"aov":54243,"share":1.14},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":493350,"orders":16,"aov":37934,"share":0.7},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":287443,"orders":10,"aov":64634,"share":0.41},{"no":1237,"name":"아이스온 에어리 브라","revenue":93360,"orders":3,"aov":65030,"share":0.13},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-11":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1313962,"orders":45,"aov":48130,"share":1.91},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":699730,"orders":23,"aov":49236,"share":1.02},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":236804,"orders":8,"aov":61751,"share":0.34},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":223080,"orders":7,"aov":37126,"share":0.32},{"no":1237,"name":"아이스온 에어리 브라","revenue":70840,"orders":2,"aov":161800,"share":0.1},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":46060,"orders":2,"aov":40480,"share":0.07},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-12":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":956046,"orders":32,"aov":49464,"share":1.51},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":795891,"orders":27,"aov":50738,"share":1.26},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":339200,"orders":11,"aov":34918,"share":0.54},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":190610,"orders":7,"aov":55859,"share":0.3},{"no":1237,"name":"아이스온 에어리 브라","revenue":54460,"orders":2,"aov":41630,"share":0.09},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-13":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":980347,"orders":33,"aov":63328,"share":1.71},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":498529,"orders":16,"aov":63412,"share":0.87},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":315967,"orders":10,"aov":78044,"share":0.55},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":180180,"orders":6,"aov":47813,"share":0.31},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":46060,"orders":2,"aov":39480,"share":0.08},{"no":1237,"name":"아이스온 에어리 브라","revenue":38900,"orders":1,"aov":160700,"share":0.07},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-14":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":750436,"orders":26,"aov":57861,"share":1.53},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":514830,"orders":17,"aov":47256,"share":1.05},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":247666,"orders":8,"aov":61301,"share":0.5},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":197280,"orders":7,"aov":40173,"share":0.4},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":113736,"orders":4,"aov":84258,"share":0.23},{"no":1237,"name":"아이스온 에어리 브라","revenue":27230,"orders":1,"aov":30230,"share":0.06},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-15":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":800727,"orders":26,"aov":62455,"share":1.66},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":636581,"orders":21,"aov":54089,"share":1.32},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":229510,"orders":8,"aov":46568,"share":0.48},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":210210,"orders":7,"aov":49259,"share":0.44},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":108023,"orders":4,"aov":122248,"share":0.22},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-16":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":991875,"orders":33,"aov":53828,"share":1.75},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":594748,"orders":20,"aov":45719,"share":1.05},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":323171,"orders":10,"aov":50944,"share":0.57},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":226189,"orders":8,"aov":46376,"share":0.4},{"no":1237,"name":"아이스온 에어리 브라","revenue":108920,"orders":4,"aov":40180,"share":0.19},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":75914,"orders":3,"aov":64187,"share":0.13},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-17":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":1245147,"orders":43,"aov":51306,"share":1.98},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":895320,"orders":30,"aov":48391,"share":1.42},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":306533,"orders":10,"aov":73161,"share":0.49},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":287010,"orders":9,"aov":34557,"share":0.46},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":46060,"orders":2,"aov":62930,"share":0.07},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1237,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-18":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":3793052,"orders":132,"aov":53330,"share":0.82},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":1310200,"orders":45,"aov":54303,"share":0.28},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":1027853,"orders":36,"aov":58748,"share":0.22},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":720902,"orders":23,"aov":50004,"share":0.16},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":173984,"orders":7,"aov":65307,"share":0.04},{"no":1237,"name":"아이스온 에어리 브라","revenue":61188,"orders":2,"aov":83815,"share":0.01},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}],"2026-08-19":[{"no":871,"name":"쿨핏 브라 볼륨핏","revenue":4973277,"orders":171,"aov":55296,"share":0.92},{"no":880,"name":"쿨핏 브라 볼륨핏 PLUS","revenue":2138935,"orders":71,"aov":51478,"share":0.4},{"no":1035,"name":"쿨핏 브라 볼륨 리프트업","revenue":1857455,"orders":66,"aov":53313,"share":0.34},{"no":881,"name":"쿨핏 브라 컴포트 BIG","revenue":981417,"orders":32,"aov":56644,"share":0.18},{"no":1268,"name":"코튼 립 스퀘어넥 브라탑","revenue":263200,"orders":11,"aov":45021,"share":0.05},{"no":1237,"name":"아이스온 에어리 브라","revenue":34351,"orders":1,"aov":90600,"share":0.01},{"no":1343,"name":"에센셜핏 스쿱 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1342,"name":"에센셜핏 백리스 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1341,"name":"에센셜핏 홀터 브라렛","revenue":0,"orders":0,"aov":0,"share":0},{"no":1340,"name":"아이스온 오프숄더 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1339,"name":"아이스온 에어리 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":1338,"name":"모달 U넥 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1337,"name":"모달 브라탑","revenue":0,"orders":0,"aov":0,"share":0},{"no":1242,"name":"아이스온 푸시업 브라","revenue":0,"orders":0,"aov":0,"share":0},{"no":963,"name":"웜터치 브라탑 롱슬리브","revenue":0,"orders":0,"aov":0,"share":0},{"no":875,"name":"쿨핏 브라 시그니처&팬티 set","revenue":0,"orders":0,"aov":0,"share":0},{"no":874,"name":"쿨핏 팬티","revenue":0,"orders":0,"aov":0,"share":0},{"no":873,"name":"쿨핏 브라 시그니처","revenue":0,"orders":0,"aov":0,"share":0},{"no":748,"name":"쿨핏 브라 오프숄더 볼륨","revenue":0,"orders":0,"aov":0,"share":0}]};
-  /* DAILY_PRODUCTS_END */
-  var productDates = Object.keys(dailyProducts); // ascending, matches dailyTotals order
-  var selectedDateIdx = productDates.length - 1;
-
-  var fmtInt = function (n) { return Math.round(n).toLocaleString("ko-KR"); };
-  var fmtWon = function (n) { return "₩" + fmtInt(n); };
-  var fmtPct = function (n) { return n.toFixed(2) + "%"; };
-  var fmtDateShort = function (iso) { var p = iso.split("-"); return p[1] + "." + p[2]; };
-
+  // ---------- 포맷 ----------
+  function int(v) { return v === null || v === undefined ? "-" : Number(v).toLocaleString("ko-KR"); }
+  function won(v) { return v === null || v === undefined ? "-" : Number(v).toLocaleString("ko-KR") + "원"; }
+  function pctv(v) { return v === null || v === undefined ? "-" : v + "%"; }
+  function ratio(v) { return v === null || v === undefined ? "-" : Number(v).toFixed(3); }
+  function fmt(kind, v) {
+    if (kind === "won") return won(v);
+    if (kind === "pct") return pctv(v);
+    if (kind === "ratio") return ratio(v);
+    return int(v);
+  }
   function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text !== undefined) e.textContent = text;
-    return e;
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
+    return n;
+  }
+  function svgEl(tag, attrs) {
+    var n = document.createElementNS(SVGNS, tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function wlabel(w) { return w.label + (w.days > 1 ? " (" + w.days + "일)" : ""); }
+
+  // ---------- 스탬프 / 푸터 ----------
+  var stamp = document.getElementById("stamp");
+  if (stamp) {
+    var when = DATA.generated_at ? DATA.generated_at.slice(0, 16).replace("T", " ") + " UTC" : "-";
+    stamp.textContent = "생성 " + when + " · 출처 Cafe24 Admin API · 창 " + W.length + "개";
+  }
+  var foot = document.getElementById("foot");
+  if (foot) {
+    foot.textContent =
+      "유효 판정은 주문 아이템 order_status 가 N 으로 시작하고 N00(입금전)이 아닌 품목이 1건 이상인 주문. " +
+      "사은품(gift=T)은 상품 집계에서 제외. 첫구매는 Cafe24 first_order=T 이며 비회원에게는 부여되지 않는다.";
   }
 
-  // ---------- KPI strip (전일/전주/전월 대비 토글) ----------
-  var latest = dailyTotals[dailyTotals.length - 1];
-  var totalsByDate = {};
-  dailyTotals.forEach(function (d) { totalsByDate[d.date] = d; });
-
-  function shiftDate(dateStr, num, unit) {
-    var d = new Date(dateStr + "T00:00:00Z");
-    if (unit === "month") d.setUTCMonth(d.getUTCMonth() - num);
-    else d.setUTCDate(d.getUTCDate() - num);
-    return d.toISOString().slice(0, 10);
-  }
-
-  var KPI_BASES = [
-    { key: "day", label: "전일", vs: "전일 대비", compareDate: function () { return shiftDate(latest.date, 1, "day"); } },
-    { key: "week", label: "전주", vs: "전주 대비", compareDate: function () { return shiftDate(latest.date, 7, "day"); } },
-    { key: "month", label: "전월", vs: "전월 대비", compareDate: function () { return shiftDate(latest.date, 1, "month"); } }
-  ];
-
-  function deltaTile(label, value, curr, compareRow, field, isPct, vsLabel) {
-    var tile = el("div", "kpi-tile");
-    tile.appendChild(el("div", "kpi-label", label));
-    tile.appendChild(el("div", "kpi-value", value));
-    if (!compareRow) {
-      var na = el("div", "kpi-delta unavailable", "비교 데이터 없음");
-      tile.appendChild(na);
-      return tile;
+  // ---------- 경고 배너 ----------
+  var banner = document.getElementById("banner");
+  if (banner) {
+    var warns = [];
+    W.forEach(function (w) {
+      (w.warnings || []).forEach(function (t) { warns.push({ w: w, t: t }); });
+    });
+    if (warns.length) {
+      var box = el("div", "warn-banner");
+      var strong = el("strong", null, "읽을 때 주의 ");
+      box.appendChild(strong);
+      warns.forEach(function (x, i) {
+        if (i) box.appendChild(document.createElement("br"));
+        box.appendChild(document.createTextNode(x.w.label + " — " + x.t));
+      });
+      banner.appendChild(box);
     }
-    var prevVal = compareRow[field];
-    var diff = curr - prevVal;
-    var pct = prevVal !== 0 ? (diff / prevVal) * 100 : 0;
-    var up = diff >= 0;
-    var delta = el("div", "kpi-delta " + (up ? "up" : "down"));
-    var arrow = el("span", "arrow", up ? "▲" : "▼");
-    delta.appendChild(arrow);
-    var amt = isPct ? (Math.abs(diff)).toFixed(2) + "p" : Math.abs(pct).toFixed(1) + "%";
-    delta.appendChild(document.createTextNode(amt));
-    delta.appendChild(el("span", "vs", vsLabel));
-    tile.appendChild(delta);
-    return tile;
   }
 
-  var kpiStrip = document.getElementById("kpiStrip");
-  function renderKpiStrip(basisKey) {
-    var basis = KPI_BASES.filter(function (b) { return b.key === basisKey; })[0] || KPI_BASES[0];
-    var compareRow = totalsByDate[basis.compareDate()] || null;
-    kpiStrip.innerHTML = "";
-    kpiStrip.appendChild(deltaTile("최신일(" + fmtDateShort(latest.date) + ") 합계 매출", fmtWon(latest.revenue), latest.revenue, compareRow, "revenue", false, basis.vs));
-    kpiStrip.appendChild(deltaTile("주문건수", fmtInt(latest.orders) + "건", latest.orders, compareRow, "orders", false, basis.vs));
-    kpiStrip.appendChild(deltaTile("객단가 (주문 전체 결제금액 평균)", fmtWon(latest.aov), latest.aov, compareRow, "aov", false, basis.vs));
-    kpiStrip.appendChild(deltaTile("일 매출 대비 비중", fmtPct(latest.share), latest.share, compareRow, "share", true, basis.vs));
+  // ---------- 창 비교표 ----------
+  var CMP = [
+    { k: "valid_orders", label: "유효주문", kind: "int" },
+    { k: "first_orders", label: "첫구매 주문", kind: "int" },
+    { k: "first_share_pct", label: "첫구매 비중", kind: "pct" },
+    { k: "first_aov", label: "첫구매 객단가", kind: "won" },
+    { k: "exclusive_coverage_pct", label: "전용 커버리지", kind: "pct", pivot: true },
+    { k: "aov_fo_with_excl", label: "전용포함 첫구매 객단가", kind: "won" },
+    { k: "aov_fo_without_excl", label: "전용미포함 첫구매 객단가", kind: "won" },
+    { k: "aov_ratio", label: "객단가 비율 (포함÷미포함)", kind: "ratio", pivot: true },
+    { k: "exclusive_orders", label: "전용 상품 주문", kind: "int" },
+    { k: "exclusive_first_pct", label: "전용 구매자 중 첫구매", kind: "pct" },
+    { k: "lineup_zero_sale", label: "전용 라인업 중 0판매", kind: "int", pivot: true },
+    { k: "bundle_fo_share_pct", label: "[N+M] 번들 포함 첫구매 비중", kind: "pct" }
+  ];
+  var cmpTable = document.getElementById("cmpTable");
+  if (cmpTable && W.length) {
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    hr.appendChild(el("th", null, "지표"));
+    W.forEach(function (w) {
+      var th = document.createElement("th");
+      var sp = el("span", "wlabel", wlabel(w));
+      th.appendChild(sp);
+      th.appendChild(el("span", "badge " + (w.promo ? "b-warn" : "b-good"),
+        w.promo ? "행사기간" : "평상시"));
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr);
+    cmpTable.appendChild(thead);
+
+    var tb = document.createElement("tbody");
+    CMP.forEach(function (m) {
+      var tr = document.createElement("tr");
+      if (m.pivot) tr.className = "pivot";
+      tr.appendChild(el("td", null, m.label));
+      W.forEach(function (w) {
+        var td = el("td", "num", fmt(m.kind, w.summary[m.k]));
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    cmpTable.appendChild(tb);
   }
 
-  var kpiBasisGroup = document.getElementById("kpiBasisGroup");
-  var kpiBasisPills = [];
-  KPI_BASES.forEach(function (basis) {
-    var pill = el("button", "date-pill", basis.label);
-    pill.type = "button";
-    pill.setAttribute("role", "tab");
-    pill.addEventListener("click", function () {
-      kpiBasisPills.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
-      renderKpiStrip(basis.key);
-    });
-    kpiBasisGroup.appendChild(pill);
-    kpiBasisPills.push(pill);
-  });
-  kpiBasisPills[0].classList.add("active");
-  kpiBasisPills[0].setAttribute("aria-selected", "true");
-  renderKpiStrip("day");
-
-  // ================= Line/area trend chart =================
-  function renderTrendChart(container, data, valueKey, opts) {
-    opts = opts || {};
-    var W = container.clientWidth || 480, H = opts.height || 220;
-    var padL = 46, padR = 16, padT = 16, padB = 26;
-    var innerW = W - padL - padR, innerH = H - padT - padB;
-
-    var values = data.map(function (d) { return d[valueKey]; });
-    var maxV = Math.max.apply(null, values);
-    var niceMax = (function (v) {
-      if (v <= 0) return 10;
-      var mag = Math.pow(10, Math.floor(Math.log10(v)));
-      var norm = v / mag;
-      var step = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
-      return step * mag;
-    })(maxV * 1.15);
-
-    function xAt(i) { return padL + (data.length === 1 ? innerW / 2 : (innerW * i) / (data.length - 1)); }
-    function yAt(v) { return padT + innerH - (innerH * v) / niceMax; }
-
-    var svgNS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", H);
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", opts.ariaLabel || "추이 차트");
-
-    // gridlines (0, mid, max)
-    [0, 0.5, 1].forEach(function (t) {
-      var v = niceMax * t;
-      var y = yAt(v);
-      var line = document.createElementNS(svgNS, "line");
-      line.setAttribute("x1", padL); line.setAttribute("x2", W - padR);
-      line.setAttribute("y1", y); line.setAttribute("y2", y);
-      line.setAttribute("class", "gridline");
-      svg.appendChild(line);
-      var txt = document.createElementNS(svgNS, "text");
-      txt.setAttribute("x", padL - 8); txt.setAttribute("y", y + 4);
-      txt.setAttribute("text-anchor", "end"); txt.setAttribute("font-size", "10.5");
-      txt.textContent = opts.compact ? compactNum(v) : fmtInt(v);
-      svg.appendChild(txt);
-    });
-
-    // x labels (first, mid, last)
-    [0, Math.floor((data.length - 1) / 2), data.length - 1].forEach(function (i) {
-      var txt = document.createElementNS(svgNS, "text");
-      txt.setAttribute("x", xAt(i)); txt.setAttribute("y", H - 6);
-      txt.setAttribute("text-anchor", "middle"); txt.setAttribute("font-size", "10.5");
-      txt.textContent = data[i].label || fmtDateShort(data[i].date);
-      svg.appendChild(txt);
-    });
-
-    // area
-    var areaPts = data.map(function (d, i) { return xAt(i) + "," + yAt(d[valueKey]); }).join(" L ");
-    var areaPath = document.createElementNS(svgNS, "path");
-    areaPath.setAttribute("d", "M " + xAt(0) + "," + yAt(0) + " L " + areaPts + " L " + xAt(data.length - 1) + "," + yAt(0) + " Z");
-    areaPath.setAttribute("class", "series-area");
-    svg.appendChild(areaPath);
-
-    // line
-    var linePath = document.createElementNS(svgNS, "path");
-    linePath.setAttribute("d", "M " + areaPts);
-    linePath.setAttribute("class", "series-line");
-    svg.appendChild(linePath);
-
-    // crosshair
-    var crosshair = document.createElementNS(svgNS, "line");
-    crosshair.setAttribute("y1", padT); crosshair.setAttribute("y2", H - padB);
-    crosshair.setAttribute("class", "crosshair-line");
-    svg.appendChild(crosshair);
-
-    // dots (all, small; end dot bigger)
-    data.forEach(function (d, i) {
-      var r = i === data.length - 1 ? 4.5 : 3;
-      var dot = document.createElementNS(svgNS, "circle");
-      dot.setAttribute("cx", xAt(i)); dot.setAttribute("cy", yAt(d[valueKey]));
-      dot.setAttribute("r", r);
-      dot.setAttribute("class", "series-dot");
-      svg.appendChild(dot);
-    });
-
-    // end label
-    var lastI = data.length - 1;
-    var endLabel = document.createElementNS(svgNS, "text");
-    endLabel.setAttribute("x", xAt(lastI));
-    endLabel.setAttribute("y", yAt(data[lastI][valueKey]) - 12);
-    endLabel.setAttribute("text-anchor", "end");
-    endLabel.setAttribute("class", "end-label-value");
-    endLabel.textContent = opts.compact ? compactNum(data[lastI][valueKey]) : fmtInt(data[lastI][valueKey]);
-    svg.appendChild(endLabel);
-
-    // mount the svg first, then attach the tooltip as a sibling on top of it —
-    // clearing container after ensureTooltip() would wipe the tooltip node
-    container.innerHTML = "";
-    container.appendChild(svg);
-    var tooltip = ensureTooltip(container);
-
-    // hit columns for hover
-    data.forEach(function (d, i) {
-      var bandW = innerW / data.length;
-      var hit = document.createElementNS(svgNS, "rect");
-      hit.setAttribute("x", xAt(i) - bandW / 2);
-      hit.setAttribute("y", padT);
-      hit.setAttribute("width", bandW);
-      hit.setAttribute("height", innerH);
-      hit.setAttribute("class", "hit-col");
-      hit.setAttribute("tabindex", "0");
-      var show = function () {
-        crosshair.setAttribute("x1", xAt(i)); crosshair.setAttribute("x2", xAt(i));
-        crosshair.style.opacity = "1";
-        var val = opts.tooltipFormatter ? opts.tooltipFormatter(d) : fmtInt(d[valueKey]);
-        showTooltip(tooltip, container, xAt(i), yAt(d[valueKey]), d.tooltipLabel || d.date, val);
-      };
-      hit.addEventListener("pointerenter", show);
-      hit.addEventListener("pointermove", show);
-      hit.addEventListener("focus", show);
-      hit.addEventListener("pointerleave", function () { crosshair.style.opacity = "0"; hideTooltip(tooltip); });
-      hit.addEventListener("blur", function () { crosshair.style.opacity = "0"; hideTooltip(tooltip); });
-      svg.appendChild(hit);
+  // ---------- KPI ----------
+  var kpiWindow = document.getElementById("kpiWindow");
+  if (kpiWindow && BASE) kpiWindow.textContent = wlabel(BASE);
+  var kpis = document.getElementById("kpis");
+  if (kpis && BASE) {
+    var s = BASE.summary;
+    [
+      ["첫구매 주문", int(s.first_orders), "전체 유효주문의 " + pctv(s.first_share_pct)],
+      ["전용 커버리지", pctv(s.exclusive_coverage_pct),
+        int(s.fo_with_excl) + " / " + int(s.first_orders) + "건"],
+      ["첫구매 객단가", won(s.first_aov), "재구매 " + won(s.repeat_aov)],
+      ["전용포함 객단가", won(s.aov_fo_with_excl), "미포함 " + won(s.aov_fo_without_excl)],
+      ["전용 구매자 중 첫구매", pctv(s.exclusive_first_pct),
+        "재구매 " + pctv(s.exclusive_repeat_pct)],
+      ["전용 라인업", int(s.lineup_size) + "개", "그 중 0판매 " + int(s.lineup_zero_sale) + "개"]
+    ].forEach(function (row) {
+      var c = el("div", "kpi");
+      c.appendChild(el("div", "k", row[0]));
+      c.appendChild(el("div", "v num", row[1]));
+      c.appendChild(el("div", "s", row[2]));
+      kpis.appendChild(c);
     });
   }
 
-  function compactNum(v) {
-    if (Math.abs(v) >= 1000000) return (v / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
-    if (Math.abs(v) >= 1000) return (v / 1000).toFixed(0) + "K";
-    return fmtInt(v);
+  // ---------- 색 매핑 ----------
+  function statusColor(pair_status) {
+    if (pair_status === "전용" || pair_status === "전용(짝미확인)") return css("--accent");
+    if (pair_status === "일반(전용쌍둥이있음)") return css("--good");
+    return css("--neutral-bar");
   }
 
-  function ensureTooltip(container) {
-    var tt = el("div", "tooltip");
-    container.style.position = "relative";
-    container.appendChild(tt);
-    return tt;
-  }
-  function showTooltip(tt, container, x, y, dateLabel, valueText) {
-    tt.innerHTML = "";
-    var valSpan = el("span", "tt-value", valueText);
-    var labelSpan = el("span", "tt-label", dateLabel);
-    tt.appendChild(valSpan);
-    tt.appendChild(labelSpan);
-    tt.style.left = x + "px";
-    tt.style.top = y + "px";
-    tt.classList.add("visible");
-  }
-  function hideTooltip(tt) { tt.classList.remove("visible"); }
+  // ---------- 랭킹 (수평 바) ----------
+  var rankBox = document.getElementById("rankChart");
+  if (rankBox && BASE) {
+    var items = (BASE.products || []).slice(0, 12);
+    var VW = 640, labelW = 208, padR = 66, rowH = 24, gap = 7, padT = 6;
+    var barArea = VW - labelW - padR;
+    var VH = items.length * (rowH + gap) - gap + padT + 6;
+    var maxV = Math.max.apply(null, items.map(function (d) { return d.fo_orders; }).concat([1]));
 
-  // ================= Horizontal bar chart =================
-  function renderRankChart(container, items) {
-    var W = container.clientWidth || 460;
-    var rowH = 26, gap = 6;
-    var padL = 8, padR = 54, padT = 4;
-    var maxLabelW = 132;
-    var H = items.length * (rowH + gap) - gap + padT + 4;
-    var chartInnerW = W - padL - padR - maxLabelW;
-    var maxV = Math.max.apply(null, items.map(function (d) { return d.revenue; }));
-
-    var svgNS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", H);
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", "상품별 매출 순위");
-
-    container.innerHTML = "";
-    container.appendChild(svg);
-    var tooltip = ensureTooltip(container);
-
+    var svg = svgEl("svg", { viewBox: "0 0 " + VW + " " + VH, role: "img",
+      "aria-label": "첫구매 주문수 상위 상품" });
     items.forEach(function (d, i) {
       var y = padT + i * (rowH + gap);
-      var barW = Math.max(2, (chartInnerW * d.revenue) / maxV);
-
-      var name = document.createElementNS(svgNS, "text");
-      name.setAttribute("x", padL);
-      name.setAttribute("y", y + rowH / 2 + 4);
-      name.setAttribute("class", "bar-label-name");
-      name.textContent = d.name.length > 15 ? d.name.slice(0, 14) + "…" : d.name;
+      var name = svgEl("text", { x: 0, y: y + rowH / 2 + 4, class: "g-name" });
+      var nm = d.product_name.length > 22 ? d.product_name.slice(0, 21) + "…" : d.product_name;
+      name.textContent = nm;
       svg.appendChild(name);
 
-      var barX = padL + maxLabelW;
-      var rect = document.createElementNS(svgNS, "rect");
-      rect.setAttribute("x", barX);
-      rect.setAttribute("y", y + 3);
-      rect.setAttribute("width", barW);
-      rect.setAttribute("height", rowH - 6);
-      rect.setAttribute("rx", 4);
-      rect.setAttribute("class", "bar-rect");
-      svg.appendChild(rect);
+      var bw = Math.max(2, (barArea * d.fo_orders) / maxV);
+      svg.appendChild(svgEl("rect", { x: labelW, y: y + 3, width: bw, height: rowH - 6,
+        rx: 3, fill: statusColor(d.pair_status) }));
 
-      var valueLabel = document.createElementNS(svgNS, "text");
-      var labelInside = barW > 60;
-      valueLabel.setAttribute("y", y + rowH / 2 + 4);
-      valueLabel.setAttribute("class", "bar-label-value");
-      valueLabel.textContent = compactNum(d.revenue);
-      if (labelInside) {
-        valueLabel.setAttribute("x", barX + barW - 8);
-        valueLabel.setAttribute("text-anchor", "end");
-        valueLabel.style.fill = "var(--surface)";
-      } else {
-        valueLabel.setAttribute("x", barX + barW + 8);
-        valueLabel.setAttribute("text-anchor", "start");
-      }
-      svg.appendChild(valueLabel);
-
-      var hit = document.createElementNS(svgNS, "rect");
-      hit.setAttribute("x", barX);
-      hit.setAttribute("y", y);
-      hit.setAttribute("width", chartInnerW);
-      hit.setAttribute("height", rowH);
-      hit.setAttribute("class", "bar-hit");
-      hit.setAttribute("tabindex", "0");
-      var show = function () {
-        rect.classList.add("hover");
-        showTooltip(tooltip, container, barX + barW / 2, y, d.name, fmtWon(d.revenue) + " · " + d.orders + "건");
-      };
-      var hide = function () { rect.classList.remove("hover"); hideTooltip(tooltip); };
-      hit.addEventListener("pointerenter", show);
-      hit.addEventListener("pointermove", show);
-      hit.addEventListener("focus", show);
-      hit.addEventListener("pointerleave", hide);
-      hit.addEventListener("blur", hide);
-      svg.appendChild(hit);
+      var v = svgEl("text", { x: labelW + bw + 7, y: y + rowH / 2 + 4, class: "g-val" });
+      v.textContent = int(d.fo_orders) + "건 · " + pctv(d.fo_penetration_pct);
+      svg.appendChild(v);
     });
+    rankBox.appendChild(svg);
   }
 
-  // ---------- product-detail table (per selected date) ----------
-  var productTbody = document.querySelector("#productTable tbody");
-  function renderProductTable(dateKey) {
-    var rows = dailyProducts[dateKey].slice().sort(function (a, b) { return b.revenue - a.revenue; });
-    productTbody.innerHTML = "";
-    rows.forEach(function (d) {
-      var tr = el("tr", d.revenue === 0 ? "zero-row" : "");
-      var nameTd = el("td", "no-name", d.name);
-      tr.appendChild(nameTd);
-      if (d.revenue === 0) {
-        var td = el("td");
-        var pill = el("span", "no-sale-pill", "판매 없음");
-        td.appendChild(pill);
-        tr.appendChild(td);
-        tr.appendChild(el("td", null, "0건"));
-        tr.appendChild(el("td", null, "—"));
-        tr.appendChild(el("td", null, "—"));
-      } else {
-        tr.appendChild(el("td", null, fmtWon(d.revenue)));
-        tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
-        tr.appendChild(el("td", null, fmtWon(d.aov)));
-        tr.appendChild(el("td", null, fmtPct(d.share)));
-      }
-      productTbody.appendChild(tr);
+  // ---------- 갭 매트릭스 (산점도) ----------
+  var gapBox = document.getElementById("gapChart");
+  if (gapBox && BASE) {
+    var pts = (BASE.products || []).filter(function (d) {
+      return d.first_index !== null && d.fo_penetration_pct !== null;
     });
-  }
+    var GW = 460, GH = 330, pl = 42, pr = 16, pt = 14, pb = 34;
+    var iw = GW - pl - pr, ih = GH - pt - pb;
+    var maxX = Math.max.apply(null, pts.map(function (d) { return d.fo_penetration_pct; }).concat([1]));
+    var yLo = 0.5, yHi = 2.0;
+    var sx = function (v) { return pl + (iw * v) / maxX; };
+    var sy = function (v) { return pt + ih - (ih * (v - yLo)) / (yHi - yLo); };
+    var maxR = Math.max.apply(null, pts.map(function (d) { return d.fo_revenue || 0; }).concat([1]));
 
-  function renderFilterTotal(dateKey) {
-    var summary = dailyTotals.filter(function (d) { return d.date === dateKey; })[0];
-    var totalEl = document.getElementById("filterTotal");
-    if (!summary) { totalEl.textContent = ""; return; }
-    var soldCount = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; }).length;
-    totalEl.innerHTML = "";
-    totalEl.appendChild(document.createTextNode(soldCount + "/" + dailyProducts[dateKey].length + "개 상품 판매 · 합계 "));
-    var strong = el("strong", null, fmtWon(summary.revenue));
-    totalEl.appendChild(strong);
-    totalEl.appendChild(document.createTextNode(" · " + summary.orders + "건"));
-  }
+    var g = svgEl("svg", { viewBox: "0 0 " + GW + " " + GH, role: "img",
+      "aria-label": "침투율 대비 첫구매지수 갭 매트릭스" });
 
-  // ---------- daily totals table (scoped to the selected date range) ----------
-  var dailyTableTbody = document.querySelector("#dailyTable tbody");
-  function renderDailyTable(rows) {
-    dailyTableTbody.innerHTML = "";
-    rows.slice().reverse().forEach(function (d) {
-      var tr = el("tr", d.date === maxDate ? "latest" : "");
-      tr.appendChild(el("td", null, d.date));
-      tr.appendChild(el("td", null, fmtWon(d.revenue)));
-      tr.appendChild(el("td", null, fmtInt(d.orders) + "건"));
-      tr.appendChild(el("td", null, fmtWon(d.aov)));
-      tr.appendChild(el("td", null, fmtPct(d.share)));
-      dailyTableTbody.appendChild(tr);
+    // 후보 영역 (지수 1.2 이상) 을 아주 옅게 깐다
+    g.appendChild(svgEl("rect", { x: pl, y: pt, width: iw, height: sy(1.2) - pt,
+      fill: css("--accent-soft"), opacity: "0.55" }));
+
+    // 축
+    g.appendChild(svgEl("line", { x1: pl, y1: pt + ih, x2: pl + iw, y2: pt + ih, class: "g-line",
+      "stroke-width": "1" }));
+    g.appendChild(svgEl("line", { x1: pl, y1: pt, x2: pl, y2: pt + ih, class: "g-line",
+      "stroke-width": "1" }));
+    [0.5, 1.0, 1.2, 1.5, 2.0].forEach(function (v) {
+      var yy = sy(v);
+      g.appendChild(svgEl("line", { x1: pl, y1: yy, x2: pl + iw, y2: yy, class: "g-line",
+        "stroke-width": v === 1.2 ? "1.4" : "1",
+        "stroke-dasharray": v === 1.2 ? "4 3" : "2 4" }));
+      var t = svgEl("text", { x: pl - 7, y: yy + 3.5, class: "g-txt", "text-anchor": "end" });
+      t.textContent = v.toFixed(1);
+      g.appendChild(t);
     });
+    var xl = svgEl("text", { x: pl + iw, y: pt + ih + 22, class: "g-txt", "text-anchor": "end" });
+    xl.textContent = "첫구매 침투율 (%) →";
+    g.appendChild(xl);
+    var yl = svgEl("text", { x: pl - 7, y: pt - 3, class: "g-txt", "text-anchor": "end" });
+    yl.textContent = "지수";
+    g.appendChild(yl);
+
+    pts.forEach(function (d) {
+      var r = 3 + 7 * Math.sqrt((d.fo_revenue || 0) / maxR);
+      g.appendChild(svgEl("circle", { cx: sx(d.fo_penetration_pct), cy: sy(d.first_index),
+        r: r.toFixed(1), fill: statusColor(d.pair_status), opacity: "0.78" }));
+    });
+    // 상위 5개만 이름을 붙인다 — 다 붙이면 못 읽는다
+    pts.slice(0, 5).forEach(function (d) {
+      var t = svgEl("text", { x: sx(d.fo_penetration_pct) + 9, y: sy(d.first_index) + 3.5,
+        class: "g-txt" });
+      t.textContent = d.product_name.length > 14 ? d.product_name.slice(0, 13) + "…" : d.product_name;
+      g.appendChild(t);
+    });
+    gapBox.appendChild(g);
   }
 
-  // ---------- trend range + granularity state ----------
-  var allDates = dailyTotals.map(function (d) { return d.date; });
-  var minDate = allDates[0], maxDate = allDates[allDates.length - 1];
-  var rangeStartDate = minDate, rangeEndDate = maxDate;
-  var granularity = "day"; // "day" | "week" | "month"
-
-  function isoWeekStart(dateStr) {
-    var d = new Date(dateStr + "T00:00:00Z");
-    var dow = d.getUTCDay(); // 0=Sun..6=Sat
-    var diffToMonday = dow === 0 ? -6 : 1 - dow;
-    var monday = new Date(d.getTime() + diffToMonday * 86400000);
-    return monday.toISOString().slice(0, 10);
+  // ---------- 전용 라인업 판정표 ----------
+  function verdictBadge(v) {
+    if (!v) return { cls: "b-mute", text: "-" };
+    if (v.indexOf("주력") === 0) return { cls: "b-good", text: v };
+    if (v.indexOf("노출부족") === 0) return { cls: "b-warn", text: v };
+    if (v.indexOf("정리후보") === 0) return { cls: "b-crit", text: "정리후보" };
+    if (v.indexOf("짝미확인") === 0) return { cls: "b-mute", text: v };
+    return { cls: "b-mute", text: v };
   }
+  var lt = document.getElementById("lineupTable");
+  if (lt && (DATA.lineupCross || []).length) {
+    var lh = document.createElement("thead");
+    var lhr = document.createElement("tr");
+    lhr.appendChild(el("th", null, "전용 상품"));
+    W.forEach(function (w) {
+      lhr.appendChild(el("th", null, wlabel(w) + (w.promo ? " · 행사" : "")));
+      lhr.appendChild(el("th", null, "전용/짝 · 흡수율"));
+    });
+    lh.appendChild(lhr);
+    lt.appendChild(lh);
 
-  function getFilteredTotals() {
-    return dailyTotals.filter(function (d) { return d.date >= rangeStartDate && d.date <= rangeEndDate; });
-  }
-
-  function aggregateRows(rows, gran) {
-    if (gran === "day") {
-      return rows.map(function (r) {
-        return { date: r.date, label: fmtDateShort(r.date), tooltipLabel: r.date, revenue: r.revenue, orders: r.orders, aov: r.aov, share: r.share };
+    var ltb = document.createElement("tbody");
+    DATA.lineupCross.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var td0 = document.createElement("td");
+      td0.appendChild(el("div", "pname", r.product_name));
+      td0.appendChild(el("div", "pno num", "#" + r.product_no));
+      tr.appendChild(td0);
+      W.forEach(function (w, i) {
+        var c = r.cells[i];
+        var tdv = document.createElement("td");
+        var vb = verdictBadge(c ? c.verdict : null);
+        tdv.appendChild(el("span", "badge " + vb.cls, vb.text));
+        tr.appendChild(tdv);
+        var tdn = el("td", "n num", c
+          ? int(c.fo) + " / " + int(c.pair) + " · " + pctv(c.absorption)
+          : "-");
+        tr.appendChild(tdn);
       });
-    }
-    var buckets = {};
-    rows.forEach(function (r) {
-      var key = gran === "month" ? r.date.slice(0, 7) : isoWeekStart(r.date);
-      if (!buckets[key]) buckets[key] = { revenue: 0, orders: 0, aovWeighted: 0, storeTotalSum: 0, first: r.date, last: r.date };
-      var b = buckets[key];
-      b.revenue += r.revenue;
-      b.orders += r.orders;
-      b.aovWeighted += r.aov * r.orders;
-      if (r.share > 0) b.storeTotalSum += (r.revenue * 100) / r.share;
-      if (r.date < b.first) b.first = r.date;
-      if (r.date > b.last) b.last = r.date;
+      ltb.appendChild(tr);
     });
-    var keys = Object.keys(buckets).sort();
-    return keys.map(function (key) {
-      var b = buckets[key];
-      var aov = b.orders > 0 ? Math.round(b.aovWeighted / b.orders) : 0;
-      var share = b.storeTotalSum > 0 ? Math.round((b.revenue / b.storeTotalSum) * 10000) / 100 : 0;
-      var label = gran === "month" ? key.slice(5, 7) + "월" : fmtDateShort(b.first) + "~" + fmtDateShort(b.last);
-      var tooltipLabel = gran === "month" ? key + " (" + fmtDateShort(b.first) + "~" + fmtDateShort(b.last) + ")" : b.first + " ~ " + b.last;
-      return { date: key, label: label, tooltipLabel: tooltipLabel, revenue: b.revenue, orders: b.orders, aov: aov, share: share };
-    });
+    lt.appendChild(ltb);
   }
 
-  // ---------- render charts ----------
-  function draw() {
-    var filtered = getFilteredTotals();
-    var series = aggregateRows(filtered.length ? filtered : dailyTotals, granularity);
-
-    renderTrendChart(document.getElementById("revenueChartWrap"), series, "revenue", {
-      ariaLabel: "합계 매출 추이",
-      compact: true,
-      tooltipFormatter: function (d) { return fmtWon(d.revenue); }
+  // ---------- 액션 ----------
+  function actionCard(a, hold) {
+    var box = el("div", "act " + a.priority.toLowerCase() + (hold ? " hold" : ""));
+    var top = el("div", "act-top");
+    top.appendChild(el("span", "badge " + (a.priority === "P1" ? "b-crit"
+      : a.priority === "P2" ? "b-warn" : "b-mute"), a.priority));
+    top.appendChild(el("span", "badge b-mute", a.rule));
+    top.appendChild(el("span", "act-title", a.type));
+    if (!hold) top.appendChild(el("span", "badge b-acc", "모든 창 확인"));
+    top.appendChild(el("span", "owner", a.owner));
+    box.appendChild(top);
+    box.appendChild(el("div", "act-target", a.target));
+    var ul = el("ul", "act-ev");
+    (a.evidence || []).forEach(function (e) {
+      if (!e.text) return;
+      var li = document.createElement("li");
+      li.appendChild(el("span", "wl", e.window + (e.promo ? " (행사)" : "") + " — "));
+      li.appendChild(document.createTextNode(e.text));
+      ul.appendChild(li);
     });
-    renderTrendChart(document.getElementById("ordersChartWrap"), series, "orders", {
-      ariaLabel: "주문건수 추이",
-      height: 190,
-      tooltipFormatter: function (d) { return fmtInt(d.orders) + "건"; }
-    });
-    var dateKey = productDates[selectedDateIdx];
-    var soldItems = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; });
-    renderRankChart(document.getElementById("rankChartWrap"), soldItems.length ? soldItems : [{ name: "판매 상품 없음", revenue: 0, orders: 0 }]);
-
-    var rangeTotalEl = document.getElementById("rangeTotal");
-    var sumRevenue = filtered.reduce(function (s, d) { return s + d.revenue; }, 0);
-    var sumOrders = filtered.reduce(function (s, d) { return s + d.orders; }, 0);
-    rangeTotalEl.innerHTML = "";
-    rangeTotalEl.appendChild(document.createTextNode(filtered.length + "일 · 합계 "));
-    rangeTotalEl.appendChild(el("strong", null, fmtWon(sumRevenue)));
-    rangeTotalEl.appendChild(document.createTextNode(" · " + fmtInt(sumOrders) + "건"));
-
-    renderDailyTable(filtered);
+    box.appendChild(ul);
+    return box;
   }
-  draw();
-  var resizeTimer;
-  window.addEventListener("resize", function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(draw, 120);
-  });
-
-  // ---------- granularity pill group ----------
-  var granPillGroup = document.getElementById("granPillGroup");
-  var GRAN_OPTIONS = [{ key: "day", label: "일" }, { key: "week", label: "주" }, { key: "month", label: "월" }];
-  var granPillEls = [];
-  GRAN_OPTIONS.forEach(function (opt) {
-    var pill = el("button", "date-pill", opt.label);
-    pill.type = "button";
-    pill.setAttribute("role", "tab");
-    pill.addEventListener("click", function () {
-      granularity = opt.key;
-      granPillEls.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
-      draw();
-    });
-    granPillGroup.appendChild(pill);
-    granPillEls.push(pill);
-  });
-  granPillEls[0].classList.add("active");
-  granPillEls[0].setAttribute("aria-selected", "true");
-
-  // ---------- date-range inputs + presets ----------
-  var rangeStartInput = document.getElementById("rangeStart");
-  var rangeEndInput = document.getElementById("rangeEnd");
-  rangeStartInput.min = rangeEndInput.min = minDate;
-  rangeStartInput.max = rangeEndInput.max = maxDate;
-  rangeStartInput.value = rangeStartDate;
-  rangeEndInput.value = rangeEndDate;
-
-  function clampRangeAndDraw() {
-    var s = rangeStartInput.value || minDate;
-    var e = rangeEndInput.value || maxDate;
-    if (s > e) { var t = s; s = e; e = t; }
-    if (s < minDate) s = minDate;
-    if (e > maxDate) e = maxDate;
-    rangeStartDate = s; rangeEndDate = e;
-    rangeStartInput.value = s; rangeEndInput.value = e;
-    rangePresetEls.forEach(function (p) { p.classList.remove("active"); p.setAttribute("aria-selected", "false"); });
-    draw();
+  var confBox = document.getElementById("actsConfirmed");
+  var holdBox = document.getElementById("actsHold");
+  var confirmed = (DATA.cross || []).filter(function (a) { return a.confirmed; });
+  var held = (DATA.cross || []).filter(function (a) { return !a.confirmed; });
+  if (confBox) {
+    if (!confirmed.length) confBox.appendChild(el("p", "sec-note", "모든 창에서 확인된 액션이 없다."));
+    confirmed.forEach(function (a) { confBox.appendChild(actionCard(a, false)); });
   }
-  rangeStartInput.addEventListener("change", clampRangeAndDraw);
-  rangeEndInput.addEventListener("change", clampRangeAndDraw);
-
-  var rangePresetGroup = document.getElementById("rangePresetGroup");
-  var RANGE_PRESETS = [
-    { label: "전체", apply: function () { return [minDate, maxDate]; } },
-    { label: "최근 7일", apply: function () {
-        var end = new Date(maxDate + "T00:00:00Z");
-        var start = new Date(end.getTime() - 6 * 86400000).toISOString().slice(0, 10);
-        return [start < minDate ? minDate : start, maxDate];
-      } }
-  ];
-  var rangePresetEls = [];
-  RANGE_PRESETS.forEach(function (preset, i) {
-    var pill = el("button", "date-pill", preset.label);
-    pill.type = "button";
-    pill.setAttribute("role", "tab");
-    pill.addEventListener("click", function () {
-      var range = preset.apply();
-      rangeStartDate = range[0]; rangeEndDate = range[1];
-      rangeStartInput.value = rangeStartDate; rangeEndInput.value = rangeEndDate;
-      rangePresetEls.forEach(function (p) { p.classList.toggle("active", p === pill); p.setAttribute("aria-selected", p === pill ? "true" : "false"); });
-      draw();
-    });
-    rangePresetGroup.appendChild(pill);
-    rangePresetEls.push(pill);
-  });
-  rangePresetEls[0].classList.add("active"); // "전체" active by default
-  rangePresetEls[0].setAttribute("aria-selected", "true");
-
-  // ---------- date filter wiring (segmented pill group) ----------
-  var datePillGroup = document.getElementById("datePillGroup");
-  var datePrev = document.getElementById("datePrev");
-  var dateNext = document.getElementById("dateNext");
-  var pillEls = [];
-
-  productDates.forEach(function (d, i) {
-    var pill = el("button", "date-pill", fmtDateShort(d));
-    pill.type = "button";
-    pill.setAttribute("role", "tab");
-    pill.dataset.idx = i;
-    if (i === productDates.length - 1) {
-      var dot = el("span", "latest-dot");
-      pill.appendChild(dot);
-    }
-    pill.addEventListener("click", function () { applyDate(i); });
-    datePillGroup.appendChild(pill);
-    pillEls.push(pill);
-  });
-
-  function applyDate(idx) {
-    selectedDateIdx = Math.max(0, Math.min(productDates.length - 1, idx));
-    var dateKey = productDates[selectedDateIdx];
-    pillEls.forEach(function (p, i) {
-      var active = i === selectedDateIdx;
-      p.classList.toggle("active", active);
-      p.setAttribute("aria-selected", active ? "true" : "false");
-    });
-    pillEls[selectedDateIdx].scrollIntoView({ block: "nearest", inline: "nearest" });
-    datePrev.disabled = selectedDateIdx === 0;
-    dateNext.disabled = selectedDateIdx === productDates.length - 1;
-    renderFilterTotal(dateKey);
-    renderProductTable(dateKey);
-    var soldItems = dailyProducts[dateKey].filter(function (d) { return d.revenue > 0; });
-    renderRankChart(document.getElementById("rankChartWrap"), soldItems.length ? soldItems : [{ name: "판매 상품 없음", revenue: 0, orders: 0 }]);
+  if (holdBox) {
+    if (!held.length) holdBox.appendChild(el("p", "sec-note", "보류 항목 없음."));
+    held.forEach(function (a) { holdBox.appendChild(actionCard(a, true)); });
   }
 
-  datePrev.addEventListener("click", function () { applyDate(selectedDateIdx - 1); });
-  dateNext.addEventListener("click", function () { applyDate(selectedDateIdx + 1); });
+  // ---------- 기존 전용상품 일별 매출 (선형) ----------
+  var lc = document.getElementById("legacyChart");
+  var days = DATA.dailyTotals || [];
+  if (lc && days.length) {
+    var rng = document.getElementById("legacyRange");
+    if (rng) rng.textContent = days[0].date + " ~ " + days[days.length - 1].date +
+      " · " + days.length + "일";
 
-  applyDate(selectedDateIdx);
+    var LW = 900, LH = 220, lpl = 58, lpr = 14, lpt = 12, lpb = 30;
+    var liw = LW - lpl - lpr, lih = LH - lpt - lpb;
+    var maxR2 = Math.max.apply(null, days.map(function (d) { return d.revenue; }).concat([1]));
+    var X = function (i) { return lpl + (days.length < 2 ? liw / 2 : (liw * i) / (days.length - 1)); };
+    var Y = function (v) { return lpt + lih - (lih * v) / maxR2; };
+
+    var s2 = svgEl("svg", { viewBox: "0 0 " + LW + " " + LH, role: "img",
+      "aria-label": "전용 상품 일별 매출 추이" });
+    [0, 0.5, 1].forEach(function (f) {
+      var yy = lpt + lih - lih * f;
+      s2.appendChild(svgEl("line", { x1: lpl, y1: yy, x2: lpl + liw, y2: yy,
+        class: "g-line", "stroke-width": "1", "stroke-dasharray": "2 4" }));
+      var t = svgEl("text", { x: lpl - 8, y: yy + 3.5, class: "g-txt", "text-anchor": "end" });
+      t.textContent = Math.round((maxR2 * f) / 1000000) + "백만";
+      s2.appendChild(t);
+    });
+
+    var dpath = "", apath = "";
+    days.forEach(function (d, i) {
+      dpath += (i ? " L " : "M ") + X(i).toFixed(1) + " " + Y(d.revenue).toFixed(1);
+    });
+    apath = dpath + " L " + X(days.length - 1).toFixed(1) + " " + (lpt + lih) +
+            " L " + X(0).toFixed(1) + " " + (lpt + lih) + " Z";
+    s2.appendChild(svgEl("path", { d: apath, fill: css("--accent"), opacity: "0.12" }));
+    s2.appendChild(svgEl("path", { d: dpath, fill: "none", stroke: css("--accent"),
+      "stroke-width": "1.8", "stroke-linejoin": "round" }));
+    days.forEach(function (d, i) {
+      if (i !== days.length - 1) return;
+      s2.appendChild(svgEl("circle", { cx: X(i), cy: Y(d.revenue), r: "3.5",
+        fill: css("--accent") }));
+    });
+    [0, Math.floor((days.length - 1) / 2), days.length - 1].forEach(function (i) {
+      var t = svgEl("text", { x: X(i), y: lpt + lih + 20, class: "g-txt",
+        "text-anchor": i === 0 ? "start" : i === days.length - 1 ? "end" : "middle" });
+      t.textContent = days[i].date.slice(5);
+      s2.appendChild(t);
+    });
+    lc.appendChild(s2);
+  } else if (lc) {
+    lc.appendChild(el("p", "sec-note", "일별 데이터가 없다."));
+  }
 })();
 </script>
